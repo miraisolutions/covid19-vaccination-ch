@@ -1,0 +1,37 @@
+Package: vacreportch
+Title: Vaccination Breakthroughs in CH
+Version: 0.0.0.9000
+Authors@R: person('Guido', 'Maggio', email = 'guido-maggio@mirai-solutions.com', role = c('cre', 'aut'))
+Description: A live article on vaccination breakthroughs in Switzerland, BAG weekly reports are analysed over time to verify Vaccination effects
+License: MIT + file LICENSE
+Imports: 
+    attempt,
+    config (>= 0.3.1),
+    dplyr,
+    DT,
+    ggplot2,
+    glue,
+    golem (>= 0.3.1),
+    htmlTable,
+    htmltools,
+    jsonlite,
+    lubridate,
+    markdown,
+    plotly,
+    processx,
+    RCurl,
+    rmarkdown,
+    scales,
+    shiny (>= 1.7.1),
+    stringr,
+    tidyr,
+    tidyselect
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2
+Suggests: 
+    rsconnect,
+    spelling,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Language: en-US

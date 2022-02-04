@@ -1,0 +1,63 @@
+---
+title: ""
+layout: default
+published: true
+category: News
+parent: news
+meta_description: |
+  COVID-19 Swiss vaccination breakthroughs report using BAG data
+tags:
+  - mirai
+  - r
+  - r_all
+  - open_source
+# If the news post should be shared automatically on social media (twitter or linkedin), then add the following social descriptions and hashtags fields as in example below.
+social:
+  description: |
+    Another closer look at BAG data on COVID-19 vaccination #breakthroughs for the last 4 weeks in Switzerland. How effective has #vaccination been?
+  hashtags: |
+    #rstats #ggplot2 #covid19 #covidswitzerland #coronainfoch
+# For r-bloggers / r-weekly posts (tag 'r'), set 'time' to be slightly earlier (within 1h)
+# than the time (in Zurich) you will push the post to GitHub for going live
+time: "14:20:00"
+# The 'knit' field allows rendering from RStudio and should NOT be changed
+# knit: (function(inputFile, encoding) postRmd::render_post(inputFile, ""))
+# output:
+#   html_document:
+#     logo: img/mirai.png
+# runtime: shiny
+---
+<!--more-->
+
+```{r setup, include=FALSE}
+# Default code chunk setup
+knitr::opts_chunk$set(echo = FALSE, collapse = FALSE, comment = "")
+# knitr::opts_chunk$set(echo = FALSE, prompt = FALSE, collapse = FALSE)
+# def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+# important to fix it, as this is set dynamically by RStudio
+options(width = 80)
+
+# libraries
+```
+
+#### Conclusions
+
+The reader must be aware that the utilized data may be updated by BAG in the following days also for the past weeks.     
+The "Unvaccinated" and "Vaccinated" populations compared in this page have some discrepancies that unfortunately cannot be handled because BAG data sources lack some views that could have been quite interesting to check:   
+
+* no data on *Infections*   
+* no info on vaccination time-lag. 
+
+Even with some deficiency in the data, this analysis clearly shows the benefits of vaccination and what could have happened this month in Switzerland if vaccines had been unavailable.    
+
+Similar results about the benefits of vaccination are available from other countries, their dashboards or produced reports could be checked for comparison. Here a short recent list:  
+
+* [Sole 24 ore](https://lab24.ilsole24ore.com/numeri-vaccini-italia-mondo/) analytics web page (in Italian, dashboard)   
+* Latest [epidemiological report from RKI](https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/nCoV.html;jsessionid=46BC03CE41403F143D5BFB36AECFA6BB.internet062?nn=2386228#doc13490882bodyText3) in Germany (in German).   
+* [Vaccines Surveillance Report](https://www.gov.uk/government/publications/covid-19-vaccine-weekly-surveillance-reports) from UK Health Security Agency.   
+* [Euro Surveillance report](https://www.eurosurveillance.org/content/eurosurveillance/) with comparison of many countries although with old data.   
+
+If you have any question about the approach, or any suggestion for improvement please do not hesitate to get in [touch](https://mirai-solutions.ch/about/contact/), we would love to hear from you as we may publish further updates to this article.
+
+This page aims also at showing how an Rmarkdown article can be posted in shinyapps.io to be a live page.
+

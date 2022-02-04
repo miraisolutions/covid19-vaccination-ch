@@ -1,0 +1,642 @@
+---
+title: "Vaccination breakthroughs in Switzerland"
+layout: default
+published: true
+category: News
+parent: news
+meta_description: |
+  COVID-19 Swiss vaccination breakthroughs report using BAG data
+tags:
+  - mirai
+  - r
+  - r_all
+  - open_source
+# If the news post should be shared automatically on social media (twitter or linkedin), then add the following social descriptions and hashtags fields as in example below.
+social:
+  description: |
+    Another closer look at BAG data on COVID-19 vaccination #breakthroughs for the last 4 weeks in Switzerland. How effective has #vaccination been?
+  hashtags: |
+    #rstats #ggplot2 #covid19 #covidswitzerland #coronainfoch
+# For r-bloggers / r-weekly posts (tag 'r'), set 'time' to be slightly earlier (within 1h)
+# than the time (in Zurich) you will push the post to GitHub for going live
+time: "14:20:00"
+# The 'knit' field allows rendering from RStudio and should NOT be changed
+# knit: (function(inputFile, encoding) postRmd::render_post(inputFile, ""))
+# output:
+#   html_document:
+#     logo: img/mirai.png
+# runtime: shiny
+---
+<!--more-->
+
+```{r setup, include=FALSE}
+# Default code chunk setup
+knitr::opts_chunk$set(echo = FALSE, collapse = FALSE, comment = "")
+# knitr::opts_chunk$set(echo = FALSE, prompt = FALSE, collapse = FALSE)
+# def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+# important to fix it, as this is set dynamically by RStudio
+pkgload::load_all(export_all = FALSE, helpers = FALSE, attach_testthat = FALSE)
+
+options(width = 80)
+
+library(jsonlite)
+library(RCurl)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
+library(plotly)
+library(tidyselect)
+library(scales)
+library(htmlTable)
+library(lubridate)
+library(kableExtra)
+
+# # we use a font size relative to the responsive body font size (em)
+# table_css <- "border-collapse: separate; border-spacing: 0.25em; width: 100%; font-size: 0.7em; margin-bottom: 14.5px;"
+# table_cell_css <- "white-space: nowrap; font-size: .95em;" # relative to the table_css
+
+```
+
+<!-- \definecolor{hightlightColor}{HTML}{FFFF66} -->
+
+Since May 2020 <span style="background-color: #dfc77f">**Mirai Solutions**</span> is <mark>showing</mark> a dashboard on our [gallery]({{ site.baseurl }}/gallery/) that contains a global view of the [COVID-19 Pandemic]({{ site.baseurl }}/gallery/covid19/), with a further split by continent and country. We use publicly available data from the [COVID-19 Data Hub](https://covid19datahub.io/), a great open source project providing a unified data set put together from numerous official local sources from all over the world.
+
+In October and December 2021 we published 2 articles ["A closer look at Vaccination breakthroughs in Switzerland"](https://mirai-solutions.ch/news/2021/10/20/covid19-vaccination-breakthroughs-switzerland/) and ["A 2nd look at Vaccination breakthroughs in Switzerland"](https://mirai-solutions.ch/news/2021/12/06/covid19-vaccination-breakthroughs-ch-v2/), where we showed how to read data from the [Swiss Federal Office for Public Health (BAG)](https://www.bag.admin.ch/bag/en/home.html) in R, and illustrated the difference in *Hospitalizations* and *Deaths* between **Vaccinated** and **Unvaccinated** during the weeks in October and December.   
+Here we provide a live update to these articles embedded in [shinyapps.io](https://www.shinyapps.io/) that will always show the latest data from BAG.     
+
+
+#### Reading BAG data
+
+To see how we read BAG data in **R** please refer to the [previous article](https://mirai-solutions.ch/news/2021/10/20/covid19-vaccination-breakthroughs-switzerland/).
+
+We are interested in the weekly BAG reports about vaccination breakthroughs occurred in the last 4 weeks for different age classes, see [data documentation](https://www.covid19.admin.ch/api/data/documentation) and our source: [opendata.swiss](https://opendata.swiss/en/dataset/covid-19-schweiz).
+
+
+```{r library, echo=FALSE, eval = TRUE}
+bag_sources = jsonlite::fromJSON(bag_api_url)
+```
+
+<!-- # ```{r utilities, include=FALSE} -->
+<!-- # source("utils.22.R") -->
+<!-- # ``` -->
+
+The data documentation makes us aware of the following restrictions and warnings about the collected data:
+
+1. During the last month the populations of "Vaccinated" and "Unvaccinated" changed, i.e. the vaccinated population has slightly increased (mainly in the younger ages).
+2. Many infected people have "Unknown" vaccination status, therefore this source has been disabled by BAG, while a more complete information is available for *Hospitalized* and *Deaths* cases.
+
+To solve the former problem (1.) we will use the average of the vaccinated an unvaccinated population sizes across the month.   
+
+```{r read-all-source, include = FALSE, messages = FALSE, echo = FALSE, eval = TRUE}
+DATA = read_bag_data_vac(bag_api_url, ageclassMap)
+# aggregation to new age classes
+DATA.AGG = DATA %>%
+  group_by(Week,AgeClass, vaccination_status ) %>%
+  summarise_if(is.numeric, sum, na.rm = TRUE)
+weeks4 = tail(unique(DATA.AGG$Week), 4)
+period = paste(range(weeks4), collapse = "-")
+
+DATA.AG4W <- DATA.AGG %>% filter(Week %in% weeks4)
+
+# read Cases, they are not available anymore
+CASES = read_bag_data_cases(bag_api_url, ageclassMap, dateweek = unique(DATA$Week))
+
+CASES.AGG = CASES %>%
+  group_by(Week,AgeClass ) %>%
+  summarise_if(is.numeric, sum, na.rm = TRUE)
+
+CASES.AG4W <- CASES.AGG %>% filter(Week %in% weeks4)
+
+weeks_from_to <- weeks_to_date(weeks4, range = TRUE)
+
+periodLabel = paste("(", paste(weeks_from_to, collapse = ","),")", sep = "")
+```
+
+As of Today, (**`r Sys.Date()`**), the 4 last weeks considered are: **`r weeks4`**, i.e. in the interval from **`r weeks_from_to[1]`** to **`r weeks_from_to[2]`**.
+
+The age categories have been redefined again as: **`r unique(ageclassMap$AgeClass)`**.
+
+
+#### Last 4 weeks Cases
+
+```{r ageclasses-pandemic-month-calc, warning=FALSE, echo=FALSE, include=FALSE}
+
+aggrvars = names(DATA.AG4W) [sapply(DATA.AG4W, is.numeric)] %>%
+  grep(pattern = "_tot$", value = TRUE, invert = TRUE)  %>%
+  grep(pattern = "^pop", value = TRUE, invert = TRUE)
+
+cumvars = setdiff(names(DATA.AG4W)[sapply(DATA.AG4W, is.numeric)], aggrvars)
+
+# Aggreate to last month figures
+DATA.AG1M <- aggregate_to_month(DATA.AG4W, period, aggv = aggrvars, cumv = cumvars)
+
+CASES.AG1M <- aggregate_to_month(CASES.AG4W, period, by = "AgeClass", 
+                                  aggv = "confirmed", cumv = c("pop", "confirmed_tot"))
+
+
+# prepare data for Cases plot
+datacases <- DATA.AG1M %>%
+  #select(Week, AgeClass, confirmed, deaths, hosp, vaccination_status, pop) %>%
+  select(Week, AgeClass, deaths, hosp, vaccination_status, pop) %>%
+  group_by(Week, AgeClass) %>% # remove vaccination
+  summarize(across(where(is.numeric), sum)) %>%
+  # merge with cases
+  left_join(CASES.AG1M %>% select(-pop,-confirmed_tot), by = c("Week", "AgeClass")) 
+
+# assign unknown age class to all
+datacases$confirmed[datacases$AgeClass == "All"] = datacases$confirmed[datacases$AgeClass == "All"] + 
+  datacases$confirmed[datacases$AgeClass == "unknown"]
+datacases$hosp[datacases$AgeClass == "All"] = datacases$hosp[datacases$AgeClass == "All"] + 
+  datacases$hosp[datacases$AgeClass == "unknown"]
+datacases$deaths[datacases$AgeClass == "All"] = datacases$deaths[datacases$AgeClass == "All"] + 
+  datacases$deaths[datacases$AgeClass == "unknown"]
+
+datacases <- datacases %>%  
+  filter(!AgeClass %in% c("unknown")) %>%
+  rename(AsOfDate = Week) %>% bind_cols() %>%
+  pivot_longer(cols = c("confirmed", "deaths", "hosp"), names_to = "Case", values_to = "Value") %>%
+  mutate(Case = factor(Case, levels = c("confirmed", "hosp", "deaths"), labels = c("Infections", "Hospitalizations", "Deaths")))
+
+.extract_value <- function(data, case, age = "All", val = "Value") {
+  data %>% filter(AgeClass %in% age & Case == case) %>% as.data.frame() %>% .[, val] %>%
+    formatC(format = "f", big.mark = "'", digits = 0)
+}
+
+```
+
+The current situation in the last 4 weeks as of **`r weeks_from_to[2]`**: how the infections, hospitalizations and deaths occurred across the age classes in absolute terms is being shown below. Overall Switzerland has registered <span style="background-color: #dfc77f">**`r .extract_value(datacases, "Infections")`**</span> infections, <span style="background-color: #dfc77f">**`r .extract_value(datacases, "Hospitalizations")`**</span> hospitalizations and <span style="background-color: #dfc77f">**`r .extract_value(datacases, "Deaths")`**</span> deaths.
+
+
+```{r ageclasses-pandemic-month, warning=FALSE, fig.width=6.667, fig.asp=0.6, dpi=150, out.extra='class="img-centered img-responsive"'}
+datacasesAges = datacases %>%
+    filter(!AgeClass %in% c("All"))
+
+plotcol <- pick_vac_lev_col("not_vaccinated")
+BarplotCovid(datacasesAges, g_palette = plotcol, X = "AgeClass", FACET = "Case", percent = FALSE)
+
+```
+
+To account for different distribution of the population in the Age Classes consider the Cases per 100'000 inhabitants:
+
+```{r ageclasses-pandemic-month-100k, fig.width=6.667, fig.asp=0.6, dpi=150, out.extra='class="img-centered img-responsive"'}
+datacases100k = datacases %>%  mutate(Value = Value / pop * 100000)
+
+plotcol <- c(rep(pick_vac_lev_col("not_vaccinated"), length(unique(ageclassMap$AgeClass))), "firebrick4")
+
+BarplotCovid(datacases100k, g_palette = plotcol,
+             X = "AgeClass", FACET = "Case", percent = FALSE)
+```
+
+*Infections* happen more frequently in younger age classes (at least in absolute terms) while *Hospitalizations* and *Deaths* are more common among the older ones. 
+
+### Current Vaccination Status
+
+The current vaccination status per age group as of **`r weeks_from_to[2]`**, the "Fully Vaccinated" population is split according to the occurred injection of the **Booster** dose.
+
+```{r ageclasses-vacc-perc, warning=FALSE, fig.width=6.667, fig.asp=0.6, dpi=150, out.extra='class="img-centered img-responsive"'}
+Pop <- DATA.AG1M %>%
+    filter((!AgeClass %in% c("unknown"))) %>%
+    select(-Week) %>%  
+    group_by(AgeClass) %>%
+    summarize(pop = sum(pop)) %>%
+    mutate(AsOfDate = unique(DATA.AG1M$Week)) %>%
+    ungroup()
+
+datavacc = DATA.AG1M %>%
+  select(Week, AgeClass,pop, vaccination_status) %>%
+  filter((!vaccination_status %in% c("Unknown","Unvac.")) & (!AgeClass %in% c("unknown"))) %>%
+  mutate(Status = factor(vaccination_status, levels = rev(names(vac_levels())[c(-1,-length(vac_levels()))]))) %>%
+  rename(AsOfDate = Week,  Value = pop) %>%
+  left_join(Pop, by = c("AsOfDate", "AgeClass")) %>%
+  mutate(Vax = Value ) %>%
+  mutate(Value = Vax / pop) %>%
+  select(-vaccination_status)
+
+datavacall <- datavacc %>% filter(AgeClass == "All") %>%
+          #arrange(!!sym(FILL)) %>% 
+          mutate(Value = cumsum(Value)) %>%
+          ungroup() %>%
+          mutate(Value = .funformat(Value * 100, TRUE), 
+                 Vax = .funformat(Vax, FALSE))
+
+plotcol <- pick_vac_lev_col(c("partially_vaccinated", "fully_vaccinated_no_booster", "fully_vaccinated_first_booster"))
+StackedBarplotCovid(datavacc, g_palette = c(plotcol), X = "AgeClass", FILL = "Status", 
+             position  = "stack", title = "Vaccination Status per age", percent = TRUE)
+
+```
+
+**`r datavacall %>% filter(Status %in% names(vac_levels())[vac_levels() == "fully_vaccinated_no_booster"]) %>% .[,"Value"]`** are fully vaccinated (2 doses), **`r datavacall %>% filter(Status %in% names(vac_levels())[vac_levels() == "partially_vaccinated"]) %>% .[,"Value"]`** have received at least one dose, while **`r datavacall %>% filter(Status %in% names(vac_levels())[vac_levels() == "fully_vaccinated_first_booster"]) %>% .[,"Value"]`** of Swiss residents have received the booster dose.
+
+This page mainly focuses on the comparison between the **Vaccinated** and **Unvaccinated**. It is worth first highlighting the differences between the 2 populations that would bias such comparison.
+The biggest is the younger age of the "Unvaccinated" population, less likely to be impacted by Covid-19. For this reason the data are grouped in **Age Classes**, even within the same class, age has a certain variability and there are other differences to consider that may make a population more or less inclined to infection, and hence to hospitalizations.   
+If we can assume that "Vaccinated" with 2 doses and those recovered with one dose have a similar protection, we can't do the same for "Unvaccinated" and those recovered from Covid. Unfortunately we cannot extract relevant information from BAG that would allow us to exclude the already **Infected** from the **Unvaccinated** population. We can show here the % of total contagion in the global population and warn the readers that a "small" % of the "Unvaccinated" is NOT unprotected (leading to underestimation of the positive effect of vaccination).
+
+```{r ageclasses-tot-confirmed, warning=FALSE}
+TotConfirmed <- CASES.AG1M %>% filter(AgeClass != "unknown") %>% select(AgeClass,confirmed_tot, pop)
+TotConfirmed <- TotConfirmed %>%
+  mutate(Percentage = confirmed_tot / pop * 100) %>%
+  rename(Population = pop, Infections = confirmed_tot) %>%
+  pivot_longer(cols = c("Population", "Infections", "Percentage"), names_to = "Case", values_to = "Value") %>%
+  mutate(Case = factor(Case, levels = c("Population", "Infections", "Percentage"), labels = c("Population", "Infections", "Percentage")))   %>%
+  rename(value = Value)
+
+TotConfirmed %>%
+  mutate(value = ifelse(value < 100, paste(round(value, 1), "%"), # simplified
+                        formatC(round(value), format = "f", big.mark = "'", digits = 0))) %>%
+  addHtmlTableStyle(
+    align = "c", css.table = sub(" *margin-bottom.*?;", "", table_css), 
+    css.cell = color_cells(TotConfirmed, header = "Case", rnames = "AgeClass", table_cell_css = table_cell_css)
+  ) %>%
+  tidyHtmlTable(header = Case ,
+                #cgroup = c(Case),
+                rnames = AgeClass,
+                caption = paste("Table 0: Confirmed Infections per Age Class.", weeks_from_to[2])) #%>%
+  # kableExtra::save_kable("table0.png", zoom = 1.45,expand = 10, vwidth = 666)
+  
+```
+
+<!-- ![](table0.png) -->
+
+It is worth mentioning other possible sources of bias that can't be isolated, some of these differences could actually cause a bias in both directions.    
+
+* Leading to underestimation of vaccination effect:  
+  + People with chronic diseases are over-represented in the "Vaccinated" population (visible from BAG website).
+  + Those working in riskier positions are over-represented in the "Vaccinated" population, e.g. doctors (?).
+  + The "Vaccinated" may tend to be less cautious, exposing themselves to higher risks (?).
+  + Since 3G-2G rule (green pass) the "Unvaccinated" are less present in risky locations  
+  + A portion of "Unvaccinated" is being very careful and isolates itself (?). 
+  + Hospitalized "with" Covid, i.e. recorded positive upon hospitalization, are counted as Covid patients.   
+* Leading to overestimation of vaccines effect:   
+  + The "Vaccinated" may lead a healthier life and hence be less at risk (?).   
+  + A portion of "Unvaccinated" is being very incautious and exposes itself to higher risk, e.g. participating in demonstrations, denying Covid, taking no protections etc. (?).   
+
+We are happy to hear more from the readers about this topic and possibly collect sources that could give a better insight. We can neglect of course possible causes of bias for *Infections* (e.g. lower test tendency of the "Vaccinated") that would not lead to a possible hospitalization, as *Infections* are not treated in this article.
+
+#### Last 4 weeks vaccination breakthrough cases
+
+A view of the absolute figures of all vaccination categories, including **"Unknown"**, i.e. not reported.
+
+```{r ageclasses-vacc-unvac, fig.width=6.667, fig.asp=0.6, dpi=150, out.extra='class="img-centered img-responsive"'}
+
+DataPlot <- DATA.AG1M %>%
+  select(Week, AgeClass, vaccination_status, hosp, deaths, pop) %>%
+  filter(!AgeClass %in% c("unknown")) %>%
+  rename(AsOfDate = Week, population = pop) %>% bind_cols() %>%
+  pivot_longer(cols = c("population","hosp", "deaths"),
+               names_to = "Case", values_to = "Value") %>%
+  mutate(Case = factor(Case, levels = c("population","hosp","deaths"),  labels = c("Population", "Hospitalizations", "Deaths")))
+
+.calc_perc_unknwon <- function(data, case) {
+  perc <- (data %>% filter(Case == case & vaccination_status == "Unknown" & AgeClass == "All") %>% .[,"Value"] / data %>% filter(Case == case & AgeClass == "All") %>% summarize(totcases = sum(Value)) %>% .[, "totcases"]) %>% as.data.frame() %>% .[, "Value"]
+  paste(round(perc * 100,1), "%")
+}
+
+DataPlotTab1 <- DataPlot %>%
+ #filter(AgeClass != "All") %>%
+ rename(Status = "vaccination_status")
+
+StackedBarplotCovid(DataPlotTab1, X = "AgeClass", FILL = "Status", FACET = "Case", g_palette = c(vac_levels_colors()), position = "fill", title = "Vaccinated vs Unvaccinated Cases")
+
+```
+
+Overall the vaccination status is <"Unknown" for **`r .calc_perc_unknwon(DataPlot, "Hospitalizations")`** of the *Hospitalized* and for **`r .calc_perc_unknwon(DataPlot, "Deaths")`** of the *Deaths*.
+
+```{r ageclasses-vacc-unvac-tab-pop-infect, warning=FALSE}
+DataTab = DataPlot %>%
+  rename(Status = vaccination_status) %>%
+  rename(value = Value)
+
+DataTab %>%
+  filter(!Case %in% c("Infections")) %>%
+  select(-AsOfDate) %>%
+  mutate(value = formatC(round(value), format = "f", big.mark = "'", digits = 0)) %>%
+  addHtmlTableStyle(
+    align = "c", css.table = sub(" *margin-bottom.*?;", "", table_css), 
+    css.cell = color_cells(DataTab %>%
+                             filter(!Case %in% c("Infections")) %>%
+                             select(-AsOfDate), header = "Status", cgroup = "Case", rnames = "AgeClass", table_cell_css = table_cell_css)
+  ) %>%
+  tidyHtmlTable(header = Status ,
+                cgroup = c(Case),
+                rnames = AgeClass,
+                caption = paste("Table 1: absolute entries per age and vaccination status.", periodLabel)) #%>%
+  #kableExtra::save_kable("table1.png", zoom = 1.45,expand = 10, vwidth = 666)
+```
+<!-- ![](table1.png) -->
+<br>
+
+There is no hint of whether the **"Unknown" entries** tend to be more or less vaccinated (checking their curves in the BAG site they seem to be somewhere in between), therefore it can make sense to **reassign proportionally** these cases to the others vaccination categories. 
+
+```{r ageclasses-vacc-unvac-tab4-calc, warning=FALSE, echo=FALSE, include=FALSE, warning=FALSE}
+#Allocate Unknown to the other cats
+DataTabScale <- rescale_unkwnown(DataTab)
+```
+```{r ageclasses-vacc-unvac-tab4-tab, warning=FALSE}
+DataTabScale %>%
+  mutate(value = formatC(round(value), format = "f", big.mark = "'", digits = 0)) %>%
+  mutate(value = ifelse(value == "NaN", "", value)) %>%
+  select(-AsOfDate) %>%
+  addHtmlTableStyle(
+    align = "c", css.table = table_css, css.cell = color_cells(DataTabScale %>% select(-1), header = "Status" ,
+                                                               cgroup = "Case",
+                                                               rnames = "AgeClass")
+  ) %>%
+  tidyHtmlTable(header = Status ,
+                cgroup = Case,
+                rnames = AgeClass,
+                caption = paste("Table 4: entries per age and vaccination status. Reallocation of Unknown vaccination status.", periodLabel)) #%>%
+  #kableExtra::save_kable("table4.png", zoom = 1.45,expand = 10, vwidth = 666)
+
+```
+<!-- ![](table4.png) -->
+
+After this reallocation let's look at the records **over 100'000 people** in each reference age class and vaccination status, and at the ratio between the "Unvaccinated" and "Vaccinated" cases, in order to understand better the associated impact of vaccination. This view will be used also in the following sections. When accounting for the total, i.e. "All" Age Class, age adjusted figures have been computed accounting for the different distribution of the Vaccinated and Unvaccinated groups across the different Age Classes.
+
+```{r ageclasses-vacc-unvac-scale100k-plot, warning=FALSE, fig.width=6.667, fig.asp=0.6, dpi=150, out.extra='class="img-centered img-responsive"'}
+
+# scale to 100k
+DataPlot100kScale <- make_100k(DataTabScale %>% rename(Value = value), 
+                               by = c("AsOfDate","AgeClass", "Status"), status = "Status")
+
+DataPlot100kScale2 = DataPlot100kScale %>%
+  #filter(AgeClass != "All" & Case != "Population")
+  filter( Case != "Population")
+
+StackedBarplotCovid(DataPlot100kScale2, X = "AgeClass", FILL = "Status", FACET = "Case", g_palette = c(vac_levels_colors()[-1]), position = "fill", title = "Vaccinated vs Unvaccinated Cases per 100'000 people")
+```
+The ratio of the impact **per 100'000 people** of the "Fully Vaccinated" vs the "Unvaccinated" measures the vaccination effect and the risk of *Hospitalization* or *Death* of the "Unvaccinated" versus the "Vaccinated".
+
+```{r ageclasses-vacc-unvac-scale100k-graph, warning=FALSE, fig.width=6.667, fig.asp=0.6, dpi=150, out.extra='class="img-centered img-responsive"'}
+DataPlot100kScaleRatios <- calc_ratio_fullyvac(DataPlot100kScale) %>%
+  filter(Status %in% names(vac_levels())[grep("fully", vac_levels())])
+
+DataPlot100kScaleRatiosPlot = DataPlot100kScaleRatios %>%
+  filter(Variable == "Ratio over Unvac.")  %>%
+  rename(Value = value)
+
+plotcol <- pick_vac_lev_col(c("fully_vaccinated_first_booster", "fully_vaccinated_no_booster"))
+StackedBarplotCovid(DataPlot100kScaleRatiosPlot %>% select(-Variable) , g_palette = c(plotcol),
+                    X = "AgeClass", FILL = "Status", FACET = "Case", percent = FALSE, title = "Ratio of Unvac. Impact vs Fully Vac", position = "dodge")
+
+
+```
+```{r ageclasses-vacc-unvac-scale100k-tab, warning=FALSE}
+DataPlot100kScaleRatios %>%
+  addHtmlTableStyle(
+    align = "c", css.table = table_css,
+    css.cell = color_cells(DataPlot100kScaleRatios %>%
+                             select(-pop, -AsOfDate), header = "Status" ,
+                           cgroup = c("Case","Variable"),
+                           rnames = "AgeClass", table_cell_css = table_cell_css)
+  ) %>%
+  tidyHtmlTable(header = Status ,
+                cgroup = c(Case,Variable),
+                rnames = AgeClass,
+                caption = paste("Table 5: entries over 100'000 people per age and vaccination status. Reallocation of Unknown vaccination status.", periodLabel),
+                skip_removal_warning = TRUE) #%>%
+#   kableExtra::save_kable("table5.png", zoom = 1.45,expand = 10, vwidth = 666)
+
+```
+<!-- ![](table5.png) -->
+The measures in the table above for the Age Class "All" are age adjusted.
+The estimate indicate that the "Unvaccinated" people have <span style="background-color: #dfc77f">**`r DataPlot100kScaleRatios %>% filter(AgeClass == "All" & Status == pick_vac_lev("fully_vaccinated_first_booster") & grepl("Ratio", Variable) & Case == "Hospitalizations") %>% as.data.frame() %>% .[,"value"]`**</span> times higher risk to be hospitalized, <span style="background-color: #dfc77f">**`r DataPlot100kScaleRatios %>% filter(AgeClass == "All" & Status == pick_vac_lev("fully_vaccinated_first_booster") & grepl("Ratio", Variable) & Case == "Deaths") %>% as.data.frame() %>% .[,"value"]`**</span> times higher risk to die compared with a "Fully Vaccinated with Booster", while <span style="background-color: #dfc77f">**`r DataPlot100kScaleRatios %>% filter(AgeClass == "All" & Status == pick_vac_lev("fully_vaccinated_no_booster") & grepl("Ratio", Variable) & Case == "Hospitalizations") %>% as.data.frame() %>% .[,"value"]`**</span> and <span style="background-color: #dfc77f">**`r DataPlot100kScaleRatios %>% filter(AgeClass == "All" & Status == pick_vac_lev("fully_vaccinated_no_booster") & grepl("Ratio", Variable) & Case == "Deaths") %>% as.data.frame() %>% .[,"value"]`**</span>  times higher compared with "Fully Vaccinated without Booster".
+
+#### Scenarios: (a) all vaccinated with booster, (b) all vaccinated, (c) current status, (d) all unvaccinated
+
+Assuming there are 3 possible **Scenarios** to add to the current one: what if there had been no vaccinated at all this month? Or if we had been all vaccinated? What if all with Booster?
+
+These opposite scenarios can be generated and compared with what really happened in the last 4 weeks ("Current") by taking the *Hospitalization* and *Death* rates over 100'000 people of the unvaccinated ("No Vac.") and vaccinated ("Vac. Booster" / "Vac No Booster") populations and project them over the full population.
+
+Worth mentioning that the protection given by the vaccines against infection is also to consider as source of bias in this scenario analysis:
+
+* If there was no vaccination at all the "Unvaccinated" would have worse figures, as they would not benefit of the presence of a vaccinated population and they would have more infections.
+* On the contrary, there would be fewer cases among the "Vaccinated" (and hence hospitalizations and deaths) if the whole population had received a full protection.
+
+Despite the decay of vaccination benefits over time and against infections (Omicron), this is still a factor to consider.  
+
+The cases per 100'000 people in the 3 scenarios + Current are presented below:
+
+```{r ageclasses-cases-scenarios-100k, fig.width=6.667, fig.asp=0.6, dpi=150, out.extra='class="img-centered img-responsive"'}
+
+datacases100k = datacases100k %>% mutate(Status = "current")
+
+#vac_levels()[c(5,3,2)]
+           
+DataPlot100kp = DataPlot100kScale %>%
+  filter(Status  %in% names(vac_levels()[c(5,3,2)])) %>%
+  bind_rows(datacases100k) %>%
+  mutate(Status = factor(Status, levels = c("Unvac.","current",names(vac_levels()[c(3,2)])), 
+                         labels = c("No Vac.","Current", "Vac. No Booster", "Vac. Booster"))) %>%
+  filter(Case %in% c("Hospitalizations","Deaths")) %>%
+  arrange(AgeClass,Status,Case)
+
+# DataPlot100kpTab7 = DataPlot100kp %>%
+#   filter(AgeClass != "All")
+
+plotcol <- c(pick_vac_lev_col(c("not_vaccinated")),
+             ProjCol,
+             pick_vac_lev_col(c("fully_vaccinated_no_booster", "fully_vaccinated_first_booster")))
+
+StackedBarplotCovid(DataPlot100kp, X = "AgeClass", FILL = "Status", FACET = "Case", g_palette = c(plotcol), position = "dodge",
+             title = "Hosp. and Deaths per 100k for each scenarios")
+
+```
+
+More importantly, projecting the values of the 3 scenarios on the whole population we can evaluate the vaccination impact in absolute terms.  
+
+```{r ageclasses-cases-scenarios, fig.width=6.667, fig.asp=0.6, dpi=150, out.extra='class="img-centered img-responsive"'}
+
+DataPlotp = DataPlot100kp %>%
+  select(-pop) %>%
+  left_join(Pop, by = c(c("AsOfDate", "AgeClass"))) %>%
+  mutate(Value = round(Value*pop / 100000))
+
+DataPlotpTab7 = DataPlotp %>%
+  filter(AgeClass != "All")
+
+plotcol <- c(pick_vac_lev_col(c("not_vaccinated")),
+             ProjCol,
+             pick_vac_lev_col(c("fully_vaccinated_no_booster", "fully_vaccinated_first_booster")))
+
+StackedBarplotCovid(DataPlotpTab7, X = "AgeClass", FILL = "Status", FACET = "Case", g_palette = c(plotcol), position = "dodge",
+             title = "Hosp. and Deaths for each scenarios")
+
+```
+
+```{r ageclasses-cases-scenarios-tab,warning=FALSE, echo = FALSE, include = TRUE}
+# TotDataPlotp = DataPlotp %>%
+#   filter(AgeClass != "All") %>%
+#   group_by(AsOfDate,Status,Case) %>%
+#   summarize(Value = sum(Value, na.rm = TRUE)) %>%
+#   mutate(AgeClass = "Total")
+
+# DataTabp <- DataPlotp %>% select(-pop, AsOfDate) %>%
+#   filter(AgeClass != "All") %>%
+#   bind_rows(TotDataPlotp) %>%
+#   rename(value = Value) 
+# 
+# TotDataTabp <- DataTabp %>% group_by(Status,Case) %>% summarize(tot = sum(value, na.rm = TRUE))
+
+DataTabp <- DataPlotp %>% select(-pop, AsOfDate) %>%
+              rename(value = Value)
+DataTabp %>% 
+  addHtmlTableStyle(
+    align = "c", css.table = table_css, 
+    css.cell = color_cells(DataTabp %>% select(-1), header = "Status" ,
+                           cgroup = "Case",
+                           rnames = "AgeClass", table_cell_css = table_cell_css#, skip = "Total"
+                           )
+  ) %>%
+  tidyHtmlTable(header = Status,
+                cgroup = Case,
+                rnames = AgeClass,
+                caption = paste("Table 6: Scenarios (a,b,c) per age and vaccination status. Reallocation of Unknown vaccination status.", periodLabel),
+                skip_removal_warning = TRUE) #%>%
+  # kableExtra::save_kable("table6.png", zoom = 1.45,expand = 10, vwidth = 666)
+
+```
+
+<!-- ![](table6.png) -->
+
+If there had been no vaccination at all, in the last 4 weeks there would have been <span style="background-color: #dfc77f">`r DataTabp %>% filter(AgeClass == "All" & Status == "No Vac." & Case == "Hospitalizations") %>% as.data.frame() %>% .[,"value"] %>% .funformat(FALSE)`</span> *Hospitalizations* and <span style="background-color: #dfc77f">`r DataTabp %>% filter(AgeClass == "All" & Status == "No Vac." & Case == "Deaths") %>% .[,"value"] %>% .funformat(FALSE)`</span> *Deaths*, on the contrary, if all had received booster, there would have been <span style="background-color: #dfc77f">`r DataTabp %>% filter(AgeClass == "All" & Status == "Vac. Booster" & Case == "Hospitalizations") %>% .[,"value"] %>% .funformat(FALSE)`</span> *Hospitalizations* and <span style="background-color: #dfc77f">`r DataTabp %>% filter(AgeClass == "All" & Status == "Vac. Booster" & Case == "Deaths") %>% .[,"value"] %>% .funformat(FALSE)`</span> *Deaths*. These figures are provided reconciling the totals summing the counts in the age classes.
+
+#### Time line of reported case
+
+This section reports how the cases developed over time within the 3 populations. Please note, differentiating according to the actual date of vaccination (e.g. if earlier than or within 6 months) is not possible.    
+Figures per 100k people are shown again, reallocating those in the "Unknown" category in each analyzed week.
+
+```{r ageclasses-timeline-calc, include = FALSE, echo = FALSE}
+ageclasses2 <- c("0-39", "40-69", "70+")
+ageclassMap2 <- ageclassMap %>% mutate(AgeClass2 = c(rep(ageclasses2[1],4), rep(ageclasses2[2], 3), rep(ageclasses2[3], 2))) %>%
+  select(-ageclass) %>%
+  rbind(c("All", "All")) %>% rbind(c("unknown","All"))
+
+DATA2 <- DATA %>% 
+  mutate(AgeClass2 = ageclassMap2$AgeClass2[match(AgeClass, ageclassMap2$AgeClass)])
+         
+
+DATA.AGG2 = DATA2 %>%
+  group_by(Week,AgeClass2, vaccination_status ) %>%
+  summarise_if(is.numeric, sum, na.rm = TRUE) %>%
+  ungroup() %>%
+  rename(AgeClass = AgeClass2) %>%
+  mutate(AgeClass = factor(AgeClass, levels = unique(ageclassMap2$AgeClass2), labels = unique(ageclassMap2$AgeClass2)))
+# 
+
+DataRoll4W100k <- NULL
+
+week_to_consider <- tail(unique(DATA.AGG2$Week), 30)
+  
+for (week in week_to_consider) {
+  last4weeks = rev(unique(DATA.AGG2$Week)[which(unique(DATA.AGG2$Week) == week) - 0:3])
+  DataMonth = DATA.AGG2 %>% filter(Week %in% last4weeks)
+  
+  DataMonth <- aggregate_to_month(DataMonth, week, aggv = aggrvars, cumv = cumvars)
+  
+  DataMonth <- DataMonth %>%
+    select(Week, AgeClass, vaccination_status, hosp, deaths, pop) %>%
+    filter(!AgeClass %in% c("unknown")) %>%
+    rename(AsOfDate = Week, population = pop) %>% bind_cols() %>%
+    pivot_longer(cols = c("population","hosp", "deaths"),
+                 names_to = "Case", values_to = "Value") %>%
+    mutate(Case = factor(Case, levels = c("population","hosp","deaths"),  
+                         labels = c("Population", "Hospitalizations", "Deaths"))) %>%
+    rename(Status = vaccination_status, 
+           value = Value)
+  
+  DataMonthScale <- rescale_unkwnown(DataMonth) %>%
+    rename(Value = value)
+  
+  DataMonthScale100k <- make_100k(DataMonthScale, by = c("AsOfDate","AgeClass", "Status"), 
+                                    status = "Status")
+  
+  DataRoll4W100k <- bind_rows(DataRoll4W100k, DataMonthScale100k)  %>%
+    filter(Status != "Partially vac.")
+
+}
+last_timeline_weeks <- tail(unique(DataRoll4W100k$AsOfDate), 40)
+
+# zero out data for booster prior to reaching 10% boosted
+threshold.vax = 0.1
+
+first.week.booster = DATA.AGG2 %>% 
+  filter(AgeClass == "All", vaccination_status == "Fully vac. Booster")  %>% select(Week, pop) %>%
+  left_join(DATA.AGG2 %>% filter(AgeClass == "All") %>% group_by(Week) %>% 
+  summarise(sumpop = sum(pop)), by = "Week") %>%
+  mutate(VaxPop = pop/sumpop) %>% filter(VaxPop > threshold.vax) %>% .[1, "Week"]
+
+# override values for booster
+DataRoll4W100k <- DataRoll4W100k %>% mutate(Value = ifelse(Status == "Fully vac. Booster" & AsOfDate < as.character(first.week.booster), NA, Value))
+
+
+```
+
+The "Partially Vaccinated" population has been removed while the Booster status is shown only since **`r first.week.booster[1]`**, i.e. when Booster doses had been administered to at least `r paste0(threshold.vax[1], "%")` of the population. In order to include more data also during low-waves periods the age Classes are restricted to 4: **`r ageclasses2`**. We also reduce the time-line to start from week `r last_timeline_weeks[1]`, corresponding to the date `r weeks_to_date(last_timeline_weeks[1], range = FALSE)`.   
+In this part the calculations done so far are replicated for each week in the time-line, i.e. for a given week the report's figures related to its past 4 weeks are being recalculated. In this way the lines can appear smoother and make the estimates more reliable (at least for over 40 where there are enough data).
+
+The curves related to the whole population ("All") look closer because the "Unvaccinated" population is much younger (they are not age adjusted).   
+Select the Hospitalized or Deaths cases and the Vaccination Status.
+<!-- # ```{r ageclasses-pandemic-hosp-timeline, fig.width=6.667, fig.asp=0.6, dpi=150, out.extra='class="img-centered img-responsive"'} -->
+<!-- #  -->
+<!-- # LinePlotCovid(DataRoll4W100k %>% filter(Case == "Hospitalizations" & AsOfDate %in% last_timeline_weeks),  -->
+<!-- #               FACET = "AgeClass", g_palette = c(rev(VaxCol),NoVaxCol),  -->
+<!-- #               title = "Time-line of Hospitalizations per Age class")  -->
+<!-- # ``` -->
+<!-- <div class = "moveup"> -->
+<!-- <div class = "extendediframe"> -->
+<!-- ```{r first-app-plot-reactive-app_read, echo=TRUE, eval=TRUE, include=TRUE} -->
+<!-- knitr::read_chunk("shinyapps/TimeLinePlot.R") -->
+<!-- ``` -->
+<!-- </div> -->
+<!-- </div> -->
+<!-- # ```{r ageclasses-pandemic-death-timeline, warning=FALSE, fig.width=6.667, fig.asp=0.6, dpi=150, out.extra='class="img-centered img-responsive"'} -->
+<!-- #  -->
+<!-- # LinePlotCovid(DataRoll4W100k %>% filter(Case == "Deaths" & AsOfDate %in% last_timeline_weeks), FACET = "AgeClass", g_palette = c(rev(VaxCol),NoVaxCol),  -->
+<!-- #               title = "Time-line of Deaths per Age class")  -->
+<!-- # ``` -->
+
+<!-- The curves related to the whole population ("All") look closer because the "Unvaccinated" population is much younger (they are not age adjusted). -->
+<!-- Due to the larger values in the "Unvaccinated" population the curves among the "Fully Vaccinated" look pretty flat and it is worth having a better look at them. -->
+
+<!-- ```{r ageclasses-pandemic-hosp-timeline-fullyvac, fig.width=6.667, fig.asp=0.6, dpi=150, out.extra='class="img-centered img-responsive"'} -->
+
+<!-- LinePlotCovid(DataRoll4W100k %>% filter(Case == "Hospitalizations" & AsOfDate %in% last_timeline_weeks & Status %in% grep("Fully", names(vac_levels()), value = TRUE)), -->
+<!--               FACET = "AgeClass", g_palette = c(rev(VaxCol)), -->
+<!--               title = "Time-line of Hospitalizations per Age class among the Fully Vaccinated") -->
+<!-- ``` -->
+<!-- ```{r ageclasses-pandemic-deaths-timeline-fullyvac, fig.width=6.667, fig.asp=0.6, dpi=150, out.extra='class="img-centered img-responsive"'} -->
+
+<!-- LinePlotCovid(DataRoll4W100k %>% filter(Case == "Deaths" & AsOfDate %in% last_timeline_weeks & Status %in% grep("Fully", names(vac_levels()), value = TRUE)), -->
+<!--               FACET = "AgeClass", g_palette = c(rev(VaxCol)), -->
+<!--               title = "Time-line of Deaths per Age class among the Fully Vaccinated") -->
+<!-- ``` -->
+
+<!-- The ratio between the incidence of "Unvaccinated" vs "Fully Vaccinated" over timee gives us a measure of how higher is the risk for the "Unvaccinated" is. -->
+
+```{r ageclasses-pandemic-hosp-timeline_ratio, warning=FALSE, fig.width=6.667, fig.asp=0.6, dpi=150, out.extra='class="img-centered img-responsive"'}
+
+DataRoll4W100kVac = DataRoll4W100k %>% filter(Status %in% grep("Fully", names(vac_levels()), value = TRUE)) %>%
+  select(- pop) %>% rename(ValueVac = Value) #%>% pivot_wider(names_from  = Status, values_from = ValueVac)
+
+DataRoll4W100kUnVac = DataRoll4W100k %>% filter(Status == "Unvac.") %>%
+  select(- Status, - pop) %>% rename(ValueUnVac = Value)
+
+DataRoll4W100kratio <- left_join(DataRoll4W100kVac, DataRoll4W100kUnVac, by = c("AsOfDate", "AgeClass", "Case" )) %>%
+  mutate(Ratio = ValueUnVac / ValueVac) %>%
+  mutate(Ratio = ifelse(is.nan(Ratio), NA, Ratio)) %>%
+  mutate(Ratio = ifelse(is.infinite(Ratio), NA, Ratio)) %>%
+  rename(Value = Ratio)
+
+assign("DataRoll4W100k", DataRoll4W100k, pos = 1)
+assign("last_timeline_weeks", last_timeline_weeks, pos = 1)
+
+# assign("DataRoll4W100k", DataRoll4W100k, envir = .GlobalEnv)
+# assign("last_timeline_weeks", last_timeline_weeks, envir = .GlobalEnv)
+
+# saveRDS(list(data = DataRoll4W100k, weeks = last_timeline_weeks), "chunk1.rds")
+# LinePlotCovid(DataRoll4W100kratio %>% filter(Case == "Hospitalizations" & AsOfDate %in% last_timeline_weeks), FACET = "AgeClass", 
+#               g_palette = c(rev(VaxCol)), 
+#               title = "Time-line of Hospitalizations per Age class") 
+
+```
