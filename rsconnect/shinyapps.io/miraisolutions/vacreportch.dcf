@@ -1,0 +1,11 @@
+name: vacreportch
+title:
+username:
+account: miraisolutions
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5586692
+bundleId: 5551780
+url: https://miraisolutions.shinyapps.io/vacreportch/
+when: 1644232132.0029
+lastSyncTime: 1644232132.0029

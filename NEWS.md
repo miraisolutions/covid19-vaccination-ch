@@ -1,3 +1,3 @@
-# vacreportch 0.0.0.9000
+# vacreportch 1.0.0
 
-* Added a `NEWS.md` file to track changes to the package.
+* First version of the article, vaccination report CH (#200)

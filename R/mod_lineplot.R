@@ -15,10 +15,16 @@ mod_lineplot_ui <- function(id){
       mainPanel(
         fluidRow(
           uiOutput(ns("widgets"))
+          #uiOutput("widgets")
+          
         ),
         plotlyOutput(ns("plot")) #, width = "100%")
+        #plotlyOutput("plot") #, width = "100%")
+        
       ),
-      style = "align:center; margin-left:250px; margin-right:320px; height:275%; width:100%"
+      #style = "align:center; margin-left:250px; margin-right:320px; height:275%; width:100%"
+      style = "align:center; height:275%; width:120%"
+      
     )
   )
 }
@@ -35,27 +41,27 @@ mod_lineplot_ui <- function(id){
 #' @importFrom graphics plot.new 
 #' 
 #' @noRd 
-mod_lineplot_server <- function(id,  data, g_palette = c(rev(VaxCol),NoVaxCol), status = names(vac_levels())){
+mod_lineplot_server <- function(id,  data, #g_palette = c(rev(VaxCol),NoVaxCol), 
+                                status = names(vac_levels())){
   moduleServer( id, function(input, output, session){
     
-    message("Start mod_lineplot_server")
+    #message("Start mod_lineplot_server")
     output$widgets <- renderUI({
       ns <- session$ns
       tagList(
-        #fluidRow(
-        column(4,
-               selectInput(inputId = ns("case"), label = "Hospitalizations or Deaths",
-                           choices = c("Hospitalizations","Deaths"), selected = "Hospitalizations")
-        ),
-        column(4,
-               selectInput(inputId = ns("status"), label = "Vac. Status",
-                           choices = c("All",status), selected = "All")
-        )
-        #)#,
+        fluidRow(
+          column(5,
+                 selectInput(inputId = ns("case"), label = "Hospitalizations or Deaths",
+                             choices = c("Hospitalizations","Deaths"), selected = "Hospitalizations")
+          ),
+          column(5,
+                 selectInput(inputId = ns("status"), label = "Vac. Status",
+                             choices = c("All",status), selected = "All")
+          )
+        )#,
         # plotlyOutput(ns("plot"), width = "100%")
       )
     })
-    #module_widgets(id)
     #print plot
     output$plot <- renderPlotly({
       if (is.null(input$case))
@@ -77,9 +83,3 @@ mod_lineplot_server <- function(id,  data, g_palette = c(rev(VaxCol),NoVaxCol), 
     
   })
 }
-    
-## To be copied in the UI
-# mod_lineplot_ui("mod_lineplot_ui_1")
-    
-## To be copied in the server
-# mod_lineplot_server("mod_lineplot_ui_1")
