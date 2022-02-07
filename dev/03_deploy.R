@@ -42,10 +42,28 @@ golem::add_dockerfile_shinyproxy()
 golem::add_dockerfile_heroku()
 
 
-rsconnect::deployApp(
-  appName = "Covid19CHArticle",
-  # exclude hidden files and renv directory (if present)
-  appFiles = setdiff(list.files(), "renv")
+rsconnect::setAccountInfo(
+  Sys.getenv("SHINYAPPS_ACCOUNT"),
+  Sys.getenv("SHINYAPPS_TOKEN"),
+  Sys.getenv("SHINYAPPS_SECRET")
 )
 
+# rsconnect::deployApp(
+#   appName = "vacreportch",
+#   # exclude hidden files and renv directory (if present)
+#   appFiles = setdiff(list.files(), "renv")
+# )
+
+# rsconnect::setAccountInfo(
+#   "miraisolutions",
+#   rsconnect::accountInfo("miraisolutions")$token,
+#   rsconnect::accountInfo("miraisolutions")$secret
+# )
+
+rsconnect::deployApp(
+  appName = "vacreportch",
+  # exclude hidden files and renv directory (if present)
+  appFiles = setdiff(list.files(), "renv"),
+  account = "miraisolutions"
+)
 
