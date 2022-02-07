@@ -101,11 +101,11 @@
   mx <- median(x, na.rm = TRUE)
   thausands <- ifelse(mx > 7500 & mx <= 750000, TRUE, FALSE)
   millions <- ifelse(mx > 750000, TRUE, FALSE)
-  if (millions) {
+  if (!is.na(millions) && millions) {
     x <- round(x/1e+06, 2)
     suffix <- "M"
   }
-  else if (thausands) {
+  else if (!is.na(thausands) && thausands) {
     x <- round(x/1000, 2)
     suffix <- "K"
   }
@@ -116,7 +116,7 @@
                                       ifelse(max(x, na.rm = TRUE) <= 1000, 10,
                                              ifelse(max(x, na.rm = TRUE) <= 10000, 100, 1000))))))
   .labnumfun <- label_number(accuracy = accy, big.mark = "'")
-  if (thausands || millions) {
+  if ((!is.na(thausands) && !is.na(thausands)) && (thausands || millions)) {
     x <- paste(.labnumfun(x), suffix)
   }
   else {
@@ -549,6 +549,9 @@ LinePlotCovid <- function(df, FACET = "AgeClass", g_palette, percent = FALSE,
   if (percent) {
     df$Value <- 100*df$Value
   }
+  
+  # df <- df %>% group_by(!!sym(FACET)) %>%
+  #   summarize(nacheck = all(is.na(Value)))
 
   ylim = .y_lim(df, percent)
   
@@ -600,12 +603,12 @@ LinePlotCovid <- function(df, FACET = "AgeClass", g_palette, percent = FALSE,
   
   if (length(g_palette)>1)
     p <- p +
-    geom_line() +
-    geom_point(size = 1)
+      geom_line() +
+      geom_point(size = 1)
   else
     p <- p +
-    geom_line(col = g_palette) +
-    geom_point(size = 1, col = g_palette)
+      geom_line(col = g_palette) +
+      geom_point(size = 1, col = g_palette)
   
   p <- p +
     facet_wrap(~ get(FACET), scales = scale, shrink = FALSE, ncol = 2)
@@ -624,10 +627,12 @@ LinePlotCovid <- function(df, FACET = "AgeClass", g_palette, percent = FALSE,
   
   weeks_line <- weeks_to_date(unique(df$AsOfDate), range = FALSE)
   # Months
+  full_lines_order <- intersect(substring(weeks_line, 5,8), 
+                               paste0("-",c(rep(0,4), c("","")), seq(2,12,2), "-"))
   full_lines_char <- sapply(paste0("-",c(rep(0,4), c("","")), seq(2,12,2), "-"), function(x)
     grep(x,weeks_line, value = TRUE)[1]
   )
-  full_lines_char <- full_lines_char[!is.na(full_lines_char)]
+  full_lines_char <- full_lines_char[full_lines_order]
   
   full_lines <- unique(df$Week)[as.character(weeks_line) %in% full_lines_char]
   
@@ -640,8 +645,10 @@ LinePlotCovid <- function(df, FACET = "AgeClass", g_palette, percent = FALSE,
     data_line <- bind_rows(data_line,data_line0)
   data_line[[FACET]] <- rep(unique(df$AgeClass), each = length(full_lines))
   
+
   data_line <- data_line %>% left_join(
-    df %>% group_by(!!sym(FACET)) %>% summarize(maxval = max(Value, na.rm = TRUE) *1.1),
+    df %>% group_by(!!sym(FACET)) %>% 
+      summarize(maxval = ifelse(all(is.na(Value)), Inf,max(Value, na.rm = TRUE)) *1.1),
     by = FACET)
   
   p <- p +
@@ -649,8 +656,9 @@ LinePlotCovid <- function(df, FACET = "AgeClass", g_palette, percent = FALSE,
     geom_text(data = data_line, aes(x = x, y = maxval, label = lab), 
               size = 1.7, inherit.aes = FALSE, hjust = 1.1, vjust = 1, angle = 90)
   
+  # Axis labels get modfied by ggplotly
   pply <- p %>% plotly::ggplotly(tooltip = c("text"),
-                                 layerData = 2,
+                                 layerData = 3,
                                  #textposition = 'outside',
                                  dynamicTicks = TRUE,
                                  originalData = TRUE

@@ -1518,9 +1518,9 @@
     },
     "vacreportch": {
       "Package": "vacreportch",
-      "Version": "0.0.0.9000",
+      "Version": "1.0.0",
       "Source": "unknown",
-      "Hash": "c8b0df53ac5984833faaea66c86804a7",
+      "Hash": "3160792c5480105451604834e97217ec",
       "Requirements": [
         "DT",
         "RCurl",
