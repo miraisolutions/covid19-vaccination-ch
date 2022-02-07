@@ -1,6 +1,5 @@
 ---
 title: "Vaccination breakthroughs in Switzerland"
-author: "Guido Maggio"
 layout: default
 output: html_document
 runtime: shiny
@@ -44,7 +43,7 @@ In October and December 2021 we published 2 articles ["A closer look at Vaccinat
 Here we provide a live update to these articles deployed to [shinyapps.io](https://www.shinyapps.io/) that will always show the latest data from BAG.     
 
 
-#### Reading BAG data
+### Reading BAG data
 
 To see how we read BAG data in **R** please refer to the [previous article](https://mirai-solutions.ch/news/2021/10/20/covid19-vaccination-breakthroughs-switzerland/).
 
@@ -96,7 +95,7 @@ As of Today, (**`r Sys.Date()`**), the 4 last weeks considered are: **`r weeks4`
 The age categories have been redefined again as: **`r unique(ageclassMap$AgeClass)`**.
 
 
-#### Last 4 weeks Cases
+### Last 4 weeks Cases and Vaccination
 
 ```{r ageclasses-pandemic-month-calc, warning=FALSE, echo=FALSE, include=FALSE}
 
@@ -248,7 +247,7 @@ It is worth mentioning other possible sources of bias that can't be isolated, so
 
 We are happy to hear more from the readers about this topic and possibly collect sources that could give a better insight. We can neglect of course possible causes of bias for *Infections* (e.g. lower test tendency of the "Vaccinated") that would not lead to a possible hospitalization, as *Infections* are not treated in this article.
 
-#### Last 4 weeks vaccination breakthrough cases
+### Last 4 weeks vaccination breakthrough cases
 
 A view of the absolute figures of all vaccination categories, including **"Unknown"**, i.e. not reported.
 
@@ -376,7 +375,7 @@ DataPlot100kScaleRatios %>%
 <!-- ![](table5.png) -->
 The estimate indicate that the "Unvaccinated" people have <span style="background-color: #dfc77f">**`r DataPlot100kScaleRatios %>% filter(AgeClass == "All" & Status == pick_vac_lev("fully_vaccinated_first_booster") & grepl("Ratio", Variable) & Case == "Hospitalizations") %>% as.data.frame() %>% .[,"value"]`**</span> times higher risk to be hospitalized, <span style="background-color: #dfc77f">**`r DataPlot100kScaleRatios %>% filter(AgeClass == "All" & Status == pick_vac_lev("fully_vaccinated_first_booster") & grepl("Ratio", Variable) & Case == "Deaths") %>% as.data.frame() %>% .[,"value"]`**</span> times higher risk to die compared with a "Fully Vaccinated with Booster", while <span style="background-color: #dfc77f">**`r DataPlot100kScaleRatios %>% filter(AgeClass == "All" & Status == pick_vac_lev("fully_vaccinated_no_booster") & grepl("Ratio", Variable) & Case == "Hospitalizations") %>% as.data.frame() %>% .[,"value"]`**</span> and <span style="background-color: #dfc77f">**`r DataPlot100kScaleRatios %>% filter(AgeClass == "All" & Status == pick_vac_lev("fully_vaccinated_no_booster") & grepl("Ratio", Variable) & Case == "Deaths") %>% as.data.frame() %>% .[,"value"]`**</span>  times higher compared with "Fully Vaccinated without Booster".
 
-#### Scenarios: (a) all vaccinated with booster, (b) all vaccinated, (c) current status, (d) all unvaccinated
+### Scenario Analysis
 
 Assuming there are 3 possible **Scenarios** to add to the current one: what if there had been no vaccinated at all this month? Or if we had been all vaccinated? What if all with Booster?
 
@@ -465,7 +464,7 @@ DataTabp %>%
   tidyHtmlTable(header = Status,
                 cgroup = Case,
                 rnames = AgeClass,
-                caption = paste("Table 6: Scenarios (a,b,c) per age and vaccination status. Reallocation of Unknown vaccination status.", periodLabel),
+                caption = paste("Table 6: Scenarios per age and vaccination status. Reallocation of Unknown vaccination status.", periodLabel),
                 skip_removal_warning = TRUE) #%>%
   # kableExtra::save_kable("table6.png", zoom = 1.45,expand = 10, vwidth = 666)
 
@@ -475,7 +474,7 @@ DataTabp %>%
 
 If there had been no vaccination at all, in the last 4 weeks there would have been <span style="background-color: #dfc77f">`r DataTabp %>% filter(AgeClass == "All" & Status == "No Vac." & Case == "Hospitalizations") %>% as.data.frame() %>% .[,"value"] %>% .funformat(FALSE)`</span> *Hospitalizations* and <span style="background-color: #dfc77f">`r DataTabp %>% filter(AgeClass == "All" & Status == "No Vac." & Case == "Deaths") %>% .[,"value"] %>% .funformat(FALSE)`</span> *Deaths*, on the contrary, if all had received booster, there would have been <span style="background-color: #dfc77f">`r DataTabp %>% filter(AgeClass == "All" & Status == "Vac. Booster" & Case == "Hospitalizations") %>% .[,"value"] %>% .funformat(FALSE)`</span> *Hospitalizations* and <span style="background-color: #dfc77f">`r DataTabp %>% filter(AgeClass == "All" & Status == "Vac. Booster" & Case == "Deaths") %>% .[,"value"] %>% .funformat(FALSE)`</span> *Deaths*. 
 
-#### Time line of reported case
+### Time line of reported case
 
 This section reports how the cases developed over time within the 3 populations. Please note, differentiating according to the actual date of vaccination (e.g. if earlier than or within 6 months) is not possible.    
 Figures per 100'000 people are shown again, reallocating those in the "Unknown" category in each analyzed week.
@@ -710,7 +709,7 @@ renderPlotly({
 
 ```
 
-#### Conclusions
+### Conclusions
 
 The reader must be aware that the utilized data are updated by BAG every day also for the past weeks, therefore the numbers seen today may be different tomorrow. Especially the lineplots may show a downtrend in the last 1 or 2 weeks due to incompleteness of the latest data.  
 
