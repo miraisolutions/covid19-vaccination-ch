@@ -19,7 +19,7 @@
 ## to change the name in the app_sys() function in app_config.R /!\
 ## 
 golem::fill_desc(
-  pkg_name = "vacreportch", # The Name of the package containing the App 
+  pkg_name = "covid19vaccinationch", # The Name of the package containing the App 
   pkg_title = "Vaccination Breakthroughs in CH", # The Title of the package containing the App 
   pkg_description = "A live article on vaccination breakthroughs in Switzerland, BAG weekly reports are analysed over time to verify Vaccination effects", # The Description of the package containing the App 
   author_first_name = "Guido", # Your First Name

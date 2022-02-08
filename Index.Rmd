@@ -16,7 +16,7 @@ pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
 
 options(width = 80)
 
-library(vacreportch)
+library(covid19vaccinationch)
 library(jsonlite)
 library(RCurl)
 library(dplyr)

@@ -9,7 +9,7 @@
 #' 
 #' @noRd
 app_sys <- function(...){
-  system.file(..., package = "vacreportch")
+  system.file(..., package = "covid19vaccinationch")
 }
 
 

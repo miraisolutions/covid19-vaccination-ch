@@ -1,4 +1,4 @@
-Package: vacreportch
+Package: covid19vaccinationch
 Title: Vaccination Breakthroughs in CH
 Version: 1.0.0
 Authors@R: person('Guido', 'Maggio', email = 'guido-maggio@mirai-solutions.com', role = c('cre', 'aut'))

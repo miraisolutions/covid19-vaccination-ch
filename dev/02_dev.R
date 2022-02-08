@@ -57,7 +57,7 @@ usethis::use_test( "app" )
 # Documentation
 
 ## Vignette ----
-usethis::use_vignette("vacreportch")
+usethis::use_vignette("covid19vaccinationch")
 devtools::build_vignettes()
 
 ## Code Coverage----

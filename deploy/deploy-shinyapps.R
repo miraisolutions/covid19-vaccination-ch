@@ -7,7 +7,7 @@ rsconnect::setAccountInfo(
 )
 rsconnect::deployApp(
   account = "miraisolutions",
-  appName = "vacreportch",
+  appName = "covid19vaccinationch",
   # exclude hidden files and renv directory (if present)
   appFiles = setdiff(list.files(), "renv")
 )
