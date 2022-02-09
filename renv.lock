@@ -235,6 +235,35 @@
         "yaml"
       ]
     },
+    "covid19vaccinationch": {
+      "Package": "covid19vaccinationch",
+      "Version": "1.0.0",
+      "Source": "unknown",
+      "Hash": "beafd92988f5c120b3a93ec2bc5c015f",
+      "Requirements": [
+        "DT",
+        "RCurl",
+        "attempt",
+        "config",
+        "dplyr",
+        "ggplot2",
+        "glue",
+        "golem",
+        "htmlTable",
+        "htmltools",
+        "jsonlite",
+        "lubridate",
+        "markdown",
+        "plotly",
+        "processx",
+        "rmarkdown",
+        "scales",
+        "shiny",
+        "stringr",
+        "tidyr",
+        "tidyselect"
+      ]
+    },
     "cpp11": {
       "Package": "cpp11",
       "Version": "0.4.2",
@@ -1515,35 +1544,6 @@
       "Repository": "CRAN",
       "Hash": "2097822ba5e4440b81a0c7525d0315ce",
       "Requirements": []
-    },
-    "vacreportch": {
-      "Package": "vacreportch",
-      "Version": "1.0.0",
-      "Source": "unknown",
-      "Hash": "3160792c5480105451604834e97217ec",
-      "Requirements": [
-        "DT",
-        "RCurl",
-        "attempt",
-        "config",
-        "dplyr",
-        "ggplot2",
-        "glue",
-        "golem",
-        "htmlTable",
-        "htmltools",
-        "jsonlite",
-        "lubridate",
-        "markdown",
-        "plotly",
-        "processx",
-        "rmarkdown",
-        "scales",
-        "shiny",
-        "stringr",
-        "tidyr",
-        "tidyselect"
-      ]
     },
     "vctrs": {
       "Package": "vctrs",
