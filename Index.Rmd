@@ -634,18 +634,10 @@ renderPlotly({
       if (is.null(input$case1))
         return(plot.new())
       
-      message("case: ", input$case1)
-      message("status: ", input$status1)
-      dat <- data1 %>% filter(Case == input$case1)
-      if (input$status1 != "All")
-        dat <- dat %>%  filter(Status == input$status1)
-      col_status <- vac_levels_colors()[as.character(unique(dat$Status))] 
-      dat_start <- dat %>% group_by(AsOfDate) %>% summarize(sumvalue = sum(Value, na.rm = TRUE)) %>%
-        filter(sumvalue > 0) %>% summarize(mindate = min(AsOfDate)) %>% as.data.frame() %>% .[,1]
-      dat <- dat %>%
-        filter(AsOfDate >= dat_start)
-      LinePlotCovid(dat, 
-                    FACET = "AgeClass", g_palette = col_status, 
+      res <- filter_dataplot(data2, input$status1, input$case1)
+
+      LinePlotCovid(res$data, 
+                    FACET = "AgeClass", g_palette = res$col_status, 
                     title = "Time-line of Vac Status per Age class") })
 ```
 
@@ -665,11 +657,6 @@ DataRoll4W100kratio <- left_join(DataRoll4W100kVac, DataRoll4W100kUnVac, by = c(
   mutate(Ratio = ifelse(is.nan(Ratio), NA, Ratio)) %>%
   mutate(Ratio = ifelse(is.infinite(Ratio), NA, Ratio)) %>%
   rename(Value = Ratio)
-
-# assign("DataRoll4W100kratio", DataRoll4W100kratio, pos = 1)
-# LinePlotCovid(DataRoll4W100kratio %>% filter(Case == "Hospitalizations" & AsOfDate %in% last_timeline_weeks), FACET = "AgeClass", 
-#               g_palette = c(rev(VaxCol)), 
-#               title = "Time-line of Hospitalizations per Age class") 
 
 ```
 ```{r ageclasses-pandemic-hosp-deaths-timeline_ratio-graph, warning=FALSE, fig.width=6, fig.asp=0.6, dpi=150, out.extra='class="img-responsive"'}
@@ -692,19 +679,11 @@ fluidRow(
 renderPlotly({
       if (is.null(input$case2))
         return(plot.new())
-      
-      message("case: ", input$case2)
-      message("status: ", input$status2)
-      dat <- data2 %>% filter(Case == input$case2)
-      if (input$status2 != "All")
-        dat <- dat %>%  filter(Status == input$status2)
-      col_status <- vac_levels_colors()[as.character(unique(dat$Status))] 
-      dat_start <- dat %>% group_by(AsOfDate) %>% summarize(sumvalue = sum(Value, na.rm = TRUE)) %>%
-        filter(sumvalue > 0) %>% summarize(mindate = min(AsOfDate)) %>% as.data.frame() %>% .[,1]
-      dat <- dat %>%
-        filter(AsOfDate >= dat_start)
-      LinePlotCovid(dat, 
-                    FACET = "AgeClass", g_palette = col_status, 
+  
+      res <- filter_dataplot(data2, input$status2, input$case2)
+
+      LinePlotCovid(res$data, 
+                    FACET = "AgeClass", g_palette = res$col_status, 
                     title = "Time-line of Vac Status per Age class") })
 
 ```
