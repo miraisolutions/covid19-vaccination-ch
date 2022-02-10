@@ -144,6 +144,11 @@
 #'
 #' @noRd
 .basic_plot_theme <- function(facet = TRUE) {
+
+  .sizetext <- function(facet) {
+    ifelse(facet, 9.5, 10.5)
+  }
+    
   theme(
     plot.title = element_text(color = "grey45", size = 12,
                               face = "bold.italic", hjust = 0.5),
@@ -156,14 +161,15 @@
     line = element_line(size = 2.2),
     axis.line.x = element_line(color = "grey45", size = 0.5),
     axis.line.y = element_line(color = "grey45", size = 0.5),
-    axis.text.x = element_text(size = ifelse(facet, 9.5, 10.5),
+    axis.text.x = element_text(size = .sizetext(facet),
                                angle = 30, hjust = 1),
-    axis.text.y = element_text(size = ifelse(facet, 9.5, 10.5)),
+    axis.text.y = element_text(size = .sizetext(facet)),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     legend.title = element_blank(),
-    legend.text = element_text(size = ifelse(facet, 9.5, 10.5)),
-    legend.key = element_rect(fill = alpha("white", 0))
+    legend.text = element_text(size = .sizetext(facet)),
+    legend.key = element_rect(fill = alpha("white", 0)),
+    legend.justification = "center"
   )
 }
 
@@ -338,7 +344,7 @@ BarplotCovid <- function(df, X, FACET, percent = FALSE, g_palette,
       hovermode = 'closest', clickmode = "event",
       xaxis = list(autorange = TRUE, fixedrange = TRUE),
       showlegend = showLegend,
-      legend = list(title = "", size = 10.5),
+      legend = list(title = "", size = 10.5, orientation = 'h'),
       xaxis = list(zerolinewidth = 4),
       yaxis = list(zerolinewidth = 4)
     )
@@ -506,14 +512,31 @@ StackedBarplotCovid <- function(df, X, FILL, FACET, percent = FALSE, g_palette,
                                  #textposition = 'outside'
                                  originalData = FALSE
   )
+  
+  leg <- list(
+    title = "",
+    font = list(
+      family = "sans-serif",
+      size = ifelse(barplotfacet, 9.5, 10.5),
+      color = "#000"),
+    bgcolor = "#E2E2E2",
+    bordercolor = "#FFFFFF",
+    borderwidth = 2,
+    orientation = 'h', #, y = 1.2
+    x = 0.5,
+    xanchor = "center",
+    yanchor = "top"
+    )
+  
+  
   if (any(traces == "remove"))
     pply <- pply %>% plotly::style(hoverinfo = "skip", traces = which(traces == "remove"))
   pply <- pply %>%
     plotly::layout(
       hovermode = 'closest', clickmode = "event",
-      xaxis = list(autorange = TRUE, fixedrange = TRUE),
+      xaxis = list(autorange = TRUE),
       showlegend = showLegend,
-      legend = list(title = "", size = 10.5),
+      legend = leg,
       xaxis = list(zerolinewidth = 4),
       yaxis = list(zerolinewidth = 4)
     )
