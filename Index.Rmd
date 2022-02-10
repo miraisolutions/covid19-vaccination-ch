@@ -620,11 +620,11 @@ data1 <- DataRoll4W100k %>% filter(AsOfDate %in% last_timeline_weeks)
 
 #UI
 fluidRow(
-  column(5,
+  column(3, offset = 1,
          selectInput(inputId = "case1", label = "Hospitalizations or Deaths",
                      choices = c("Hospitalizations","Deaths"), selected = "Hospitalizations")
   ),
-  column(5,
+  column(3,
          selectInput(inputId = "status1", label = "Vac. Status",
                      choices = c("All",status1), selected = "All")
   )
@@ -679,11 +679,11 @@ data2 <- DataRoll4W100kratio %>% filter(AsOfDate %in% last_timeline_weeks)
 
 #UI
 fluidRow(
-  column(5,
+  column(3, offset = 1,
          selectInput(inputId = "case2", label = "Hospitalizations or Deaths",
                      choices = c("Hospitalizations","Deaths"), selected = "Hospitalizations")
   ),
-  column(5,
+  column(3,
          selectInput(inputId = "status2", label = "Vac. Status",
                      choices = c("All",status2), selected = "All")
   )
