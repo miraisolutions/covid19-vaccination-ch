@@ -39,6 +39,8 @@ Infection cases cannot be used for comparison because not provided by BAG.
 The application fetches the data from BAG any time it is run. Given that BAG updates the data daily also for the past weeks (delay in communication) the presented results are also updated.
 A new week is published by BAG on Monday.
 
+It is expected that upon data structure changes from BAG this application may fail to initialize. An update will be then provided within short time.
+
 # ShinyApps.io deployment
 
 The article is being deployed to **Shinyapps.io** as an **Rmarkdown** Rmd document.

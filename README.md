@@ -37,6 +37,10 @@ BAG updates the data daily also for the past weeks (delay in
 communication) the presented results are also updated. A new week is
 published by BAG on Monday.
 
+It is expected that upon data structure changes from BAG this
+application may fail to initialize. An update will be then provided
+within short time.
+
 # ShinyApps.io deployment
 
 The article is being deployed to **Shinyapps.io** as an **Rmarkdown**
