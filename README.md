@@ -3,15 +3,9 @@
 
 # covid19vaccinationch
 
-<!-- badges: start -->
-
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-<!-- badges: end -->
-
 The goal of `covid19vaccinationch` is to provide a dashboard article
 analyzing the weekly Vaccination report from
-[**BAG**](https://www.bag.admin.ch/bag/en/home.html) (Bundesamt für
+[**BAG**](https://www.bag.admin.ch/bag/en/home.html) (BundesAmt für
 Gesundheit - Swiss Federal Office for Public Health) collecting the data
 from the past 4 weeks..
 
