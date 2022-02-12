@@ -4,14 +4,14 @@
 # Triggered on push and pull request events
 on:
   schedule:
-    - cron: "22 * * * *"
+    - cron: "30 * * * *"
   
 
 # Name of the workflow => usethis::use_github_actions_badge("CI-CD-renv")
 name: Build-Data
 
 jobs:
-  CI-CD:
+  BUILD-DATA:
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
