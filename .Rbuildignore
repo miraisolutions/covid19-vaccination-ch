@@ -12,3 +12,4 @@ $run_dev.*
 ^man-roxygen$
 ^rsconnect$
 ^\.github$
+^inst/data$

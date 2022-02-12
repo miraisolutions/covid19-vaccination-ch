@@ -15,6 +15,7 @@ pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
 # library(htmlTable)
 # library(lubridate)
 
+print("BUILD DATA")
 bag_sources = jsonlite::fromJSON(bag_api_url)
 
 DATA = read_bag_data_vac(bag_api_url, ageclassMap)
@@ -36,5 +37,6 @@ CASES = read_bag_data_cases(bag_api_url, ageclassMap, dateweek = unique(DATA$Wee
 
 # CASES.AG4W <- CASES.AGG %>% filter(Week %in% weeks4)
 
+message("SAVING RDS DATA")
 saveRDS(DATA, "inst/data/DATA.rds")
 saveRDS(CASES, "inst/data/CASES.rds")
