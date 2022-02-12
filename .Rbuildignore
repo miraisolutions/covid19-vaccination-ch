@@ -11,3 +11,4 @@ $run_dev.*
 ^deploy$
 ^man-roxygen$
 ^rsconnect$
+^\.github$

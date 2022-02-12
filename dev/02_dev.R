@@ -75,7 +75,21 @@ covrpage::covrpage()
 usethis::use_github()
 
 # GitHub Actions
-usethis::use_github_action() 
+#usethis::use_github_action() 
+
+usethis::use_github_action(
+  url = file.path("https://github.com/miraisolutions/techguides/blob/master",
+                  # "shiny-ci-cd/actions/ci.yml"
+                  "shiny-ci-cd/actions/ci-renv.yml"
+  ),
+  save_as = "workflow.yml"
+)
+usethis::use_github_actions_badge("CI-CD")
+usethis::use_git_ignore("rsconnect")
+usethis::use_package("rsconnect", "Suggests")
+renv::snapshot() 
+
+
 # Chose one of the three
 # See https://usethis.r-lib.org/reference/use_github_action.html
 usethis::use_github_action_check_release() 
