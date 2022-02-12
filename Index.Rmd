@@ -66,23 +66,33 @@ The data documentation makes us aware of the following restrictions and warnings
 To solve the former problem (1.) we will use the average of the "Vaccinated" an "Unvaccinated" population sizes across the month.   
 
 ```{r read-all-source, include = FALSE, messages = FALSE, echo = FALSE, eval = TRUE}
-DATA = read_bag_data_vac(bag_api_url, ageclassMap)
+if (FALSE) {
+  DATA = read_bag_data_vac(bag_api_url, ageclassMap)
+
+} else
+  DATA <- readRDS("inst/data/DATA.rds")
+
 # aggregation to new age classes
 DATA.AGG = DATA %>%
   group_by(Week,AgeClass, vaccination_status ) %>%
   summarise_if(is.numeric, sum, na.rm = TRUE)
+  
 weeks4 = tail(unique(DATA.AGG$Week), 4)
 period = paste(range(weeks4), collapse = "-")
 
 DATA.AG4W <- DATA.AGG %>% filter(Week %in% weeks4)
 
 # read Cases, they are not available anymore
-CASES = read_bag_data_cases(bag_api_url, ageclassMap, dateweek = unique(DATA$Week))
+if (FALSE) {
+  CASES = read_bag_data_cases(bag_api_url, ageclassMap, dateweek = unique(DATA$Week))
+
+} else 
+  CASES <- readRDS("inst/data/CASES.rds")
 
 CASES.AGG = CASES %>%
-  group_by(Week,AgeClass ) %>%
-  summarise_if(is.numeric, sum, na.rm = TRUE)
-
+    group_by(Week,AgeClass ) %>%
+    summarise_if(is.numeric, sum, na.rm = TRUE)
+  
 CASES.AG4W <- CASES.AGG %>% filter(Week %in% weeks4)
 
 weeks_from_to <- weeks_to_date(weeks4, range = TRUE)
