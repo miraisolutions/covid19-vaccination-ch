@@ -12,7 +12,6 @@ Imports:
     DT,
     ggplot2,
     glue,
-    golem (>= 0.3.1),
     htmlTable,
     htmltools,
     jsonlite,
