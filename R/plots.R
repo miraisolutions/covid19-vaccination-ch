@@ -356,21 +356,27 @@ BarplotCovid <- function(df, X, FACET, percent = FALSE, g_palette, position = "f
                                  originalData = FALSE
   )
   
-  if (any(traces == "remove"))
-    pply <- pply %>% plotly::style(hoverinfo = "skip", traces = which(traces == "remove"))
+  # if (any(traces == "remove"))
+  #   pply <- pply %>% plotly::style(hoverinfo = "skip", traces = which(traces == "remove"))
   pply <- pply %>%
+    #plotly::config(displayModeBar = F)  %>%
     #plotly::style(hoverinfo = "text") %>%
     plotly::layout(
-      hovermode = 'closest', clickmode = "event",
-      xaxis = list(autorange = TRUE, fixedrange = TRUE),
+      hovermode = 'closest', clickmode = 'none', #clickmode = "event",
+      #xaxis = list(autorange = TRUE, fixedrange = TRUE),
       showlegend = showLegend,
       legend = legend_pars(barplotfacet),
-      xaxis = list(zerolinewidth = 4),
-      yaxis = list(zerolinewidth = 4)
+      dragmode = FALSE,
+      # xaxis = list(#zerolinewidth = 4., 
+      #              #autorange = TRUE, 
+      #             fixedrange = TRUE),
+      yaxis = list(#fixedrange = TRUE, 
+                   zerolinewidth = 4)
     )
-  p <- pply
-
-  p
+  if (any(traces == "remove"))
+    pply <- pply %>% plotly::style(hoverinfo = "skip", traces = which(traces == "remove"))
+  
+  pply
 }
 
 #' Stacked Barplot function
@@ -530,25 +536,28 @@ StackedBarplotCovid <- function(df, X, FILL, FACET, percent = FALSE, g_palette,
                                  layerData = 1,
                                  #dynamicTicks = TRUE,
                                  #textposition = 'outside'
-                                 originalData = FALSE
-  )
-  
+                                 originalData = FALSE)
   if (any(traces == "remove"))
     pply <- pply %>% plotly::style(hoverinfo = "skip", traces = which(traces == "remove"))
   
-  
   pply <- pply %>%
+    #plotly::config(displayModeBar = F)  %>%
     plotly::layout(
-      hovermode = 'closest', clickmode = "event",
-      xaxis = list(autorange = TRUE),
+      hovermode = 'closest', clickmode = "none", #event
+      #xaxis = list(autorange = TRUE), 
       showlegend = showLegend,
       legend = legend_pars(barplotfacet),
-      xaxis = list(zerolinewidth = 4),
-      yaxis = list(zerolinewidth = 4)
+      dragmode = FALSE,
+      # xaxis = list(#zerolinewidth = 4., 
+      #              #autorange = TRUE, 
+      #              fixedrange = TRUE),
+      yaxis = list(#fixedrange = TRUE, 
+                   zerolinewidth = 4)
     )
-  p <- pply
 
-  p
+  
+  pply
+
 }
 
 #' Line Plot function
@@ -699,12 +708,14 @@ LinePlotCovid <- function(df, FACET = "AgeClass", g_palette, percent = FALSE,
   
   pply <- pply %>%
     plotly::layout(
-      hovermode = 'closest', #clickmode = "event",
+      hovermode = 'closest', clickmode = "event",
       #hovermode = 'x', #clickmode = "event",
       showlegend = TRUE,
       legend = legend_pars(TRUE),
+      dragmode = FALSE,
       xaxis = list(zerolinewidth = 2)
-      # yaxis = list(zerolinewidth = 4)
+      # yaxis = list(#autorange = TRUE, 
+      #   fixedrange = TRUE)
     )
   p <- pply
   p

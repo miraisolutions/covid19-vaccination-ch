@@ -20,7 +20,7 @@ Hospitalized and Deaths rates withing the 4 populations are compared to
 derive who is more at risk. The following measures are shown in the
 article:  
 - Hospitalized / Deaths counts  
-- Hospitalized / Deaths per 100’000 people
+- Hospitalized / Deaths per 100'000 people
 
 Entries with “Unknown” vaccination status are allocated to the 4
 populations proportionally. Infection cases cannot be used for
@@ -46,3 +46,7 @@ file, it is possible to deploy an Index.Rmd file that will generate
 `index.html` once rendered. The Rmd article is written with
 `runtime: shiny` and contains both `ggplot2` / `plotly` graphs and
 `shiny` dynamic charts.
+
+
+rsconnect is in gitignore but also on github, to be removed from github
+

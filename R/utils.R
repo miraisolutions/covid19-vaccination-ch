@@ -115,10 +115,10 @@ weeks_to_date <- function(w, range = TRUE){
 aggregate_to_month <- function(data, pd, by = c("AgeClass","vaccination_status"), 
                                aggv, cumv) {
   data %>%
-    group_by(.dots = by) %>%
+    group_by(across(all_of(by))) %>%
     summarise_at(aggv, sum, na.rm = TRUE) %>%
     left_join(data %>%
-                group_by(.dots = by) %>%
+                group_by(across(all_of(by))) %>%
                 summarise_at(cumv, mean, na.rm = TRUE), by = c(by)) %>%
     ungroup() %>%
     mutate(Week = pd)
@@ -149,11 +149,12 @@ aggregate_to_month <- function(data, pd, by = c("AgeClass","vaccination_status")
 #' @param by character vector of column names to group_by
 #' 
 #' @import dplyr
-rescale_unkwnown <- function(data, by = c("AsOfDate","AgeClass", "Case")) {
+rescale_unknown <- function(data, by = c("AsOfDate","AgeClass", "Case")) {
   # Sum all classes but Unknown 
   dataTotNoUkn = data  %>%
     filter(Status != "Unknown") %>%
-    group_by(.dots = by) %>%
+    #group_by(.dots = by) %>%
+    group_by(across(all_of(by))) %>%
     summarize(Total = sum(value)) %>%
     ungroup()
   # Unknown Values
@@ -175,8 +176,9 @@ rescale_unkwnown <- function(data, by = c("AsOfDate","AgeClass", "Case")) {
   # recompute All
   dataScaleAll = dataScale %>% 
     filter(AgeClass != "All") %>% arrange(Case) %>% 
-    #group_by(Status, Case) %>% 
     group_by(.dots = c(setdiff(by, "AgeClass"), "Status")) %>% 
+    #group_by(across(all_of(setdiff(by, "AgeClass"), "Status"))) %>%  
+    #this should work, to be testes
     summarise(across(where(is.numeric), sum, na.rm = TRUE)) %>%
     ungroup() %>%
     mutate(AgeClass = "All")

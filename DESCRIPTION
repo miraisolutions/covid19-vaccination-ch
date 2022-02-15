@@ -1,12 +1,13 @@
 Package: covid19vaccinationch
 Title: Vaccination Breakthroughs in CH
-Version: 1.0.0
+Version: 0.0.0-9000
 Authors@R: person('Guido', 'Maggio', email = 'guido-maggio@mirai-solutions.com', role = c('cre', 'aut'))
-Description: A live article on vaccination breakthroughs in Switzerland, BAG weekly reports are analysed over time to verify Vaccination effects
-License: MIT + file LICENSE
+Description: A live article on vaccination breakthroughs in Switzerland, BAG weekly reports are analyzed over time to verify Vaccination benefits
+License: GPL (>= 3)
+Depends:
+    R (>= 4.0.0)
 Imports: 
     attempt,
-    config (>= 0.3.1),
     dplyr,
     DT,
     ggplot2,

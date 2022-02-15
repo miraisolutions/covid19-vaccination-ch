@@ -1,7 +1,3 @@
-# covid19vaccinationch 1.0.1
+# covid19vaccinationch 0.0.0-9000
 
-* Updated package name and made it deployment ready (#2)
-
-# covid19vaccinationch 1.0.0
-
-* First version of the article, vaccination report CH (#1)
+* First version of the article, vaccination report CH (#1) (#2)

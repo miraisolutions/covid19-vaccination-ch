@@ -56,5 +56,5 @@ jobs:
 
       - name: Run R build data script
         run: |
-          source("inst/data/build.data.R")
+          build_data()
         shell: Rscript {0}

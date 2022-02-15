@@ -6,8 +6,9 @@ rsconnect::setAccountInfo(
   Sys.getenv("SHINYAPPS_SECRET")
 )
 rsconnect::deployApp(
-  account = "miraisolutions",
+  #account = "miraisolutions",
+  appDir = "inst/report",
   appName = "covid19-vaccination-ch",
-  # exclude hidden files and renv directory (if present)
-  appFiles = setdiff(list.files(), "renv")
+  # # exclude hidden files and renv directory (if present)
+  #appFiles = setdiff(list.files(), "renv")
 )
