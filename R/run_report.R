@@ -8,7 +8,7 @@ report_path <- function() {
 #' 
 #' @noRd
 data_path <- function() {
-  system.file("data", package = "covid19vaccinationch")  
+  system.file("bag_data", package = "covid19vaccinationch")  
 }
 
 
