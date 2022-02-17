@@ -49,7 +49,6 @@ build_data <- function(url = bag_api_url, agemap = ageclassMap, writerds = TRUE)
   
   cumvars = setdiff(names(DATA.AGG2)[sapply(DATA.AGG2, is.numeric)], aggrvars)
   
-  
   for (week in week_to_consider) {
     last4weeks = rev(unique(DATA.AGG2$Week)[which(unique(DATA.AGG2$Week) == week) - 0:3])
     DataMonth = DATA.AGG2 %>% filter(Week %in% last4weeks)
@@ -74,10 +73,8 @@ build_data <- function(url = bag_api_url, agemap = ageclassMap, writerds = TRUE)
                                     status = "Status")
     
     DataRoll4W100k <- bind_rows(DataRoll4W100k, DataMonthScale100k)  #%>%
-    #   filter(Status != "Partially vac.")
-    
+    #   filter(Status != "Partially vac.") # filter will be done in Rmd
   }
-  
   
   if (writerds) {
     message("SAVING RDS DATA")
