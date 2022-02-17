@@ -78,9 +78,10 @@ build_data <- function(url = bag_api_url, agemap = ageclassMap, writerds = TRUE)
     
   }
   
-  message("SAVING RDS DATA")
   
   if (writerds) {
+    message("SAVING RDS DATA")
+    
     saveRDS(DATA, "inst/bag_data/DATA.rds")
     saveRDS(CASES, "inst/bag_data/CASES.rds") 
     saveRDS(DataRoll4W100k, "inst/bag_data/DataRoll4W100k.rds") 
