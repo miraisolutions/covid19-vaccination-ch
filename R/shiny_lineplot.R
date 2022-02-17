@@ -63,11 +63,13 @@ lineplot_server <- function(input, output, session,  data,
         fluidRow(
           column(5,
                  selectInput(inputId = "case", label = "Hospitalizations or Deaths",
-                             choices = c("Hospitalizations","Deaths"), selected = "Hospitalizations")
+                             choices = c("Hospitalizations","Deaths"), selected = "Hospitalizations",
+                             selectize=TRUE)
           ),
           column(5,
                  selectInput(inputId = "status", label = "Vac. Status",
-                             choices = c("All",status), selected = "All")
+                             choices = c("All",status), selected = "All",
+                             selectize=TRUE)
           )
         )#,
         # plotlyOutput("plot"), width = "100%")

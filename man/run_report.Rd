@@ -4,10 +4,17 @@
 \alias{run_report}
 \title{It renders the Article Rmd report}
 \usage{
-run_report(rmdname = "Index.Rmd", quiet = TRUE, run_pandoc = TRUE)
+run_report(
+  rmdname = "Index.Rmd",
+  out.html = "Index.html",
+  quiet = TRUE,
+  run_pandoc = TRUE
+)
 }
 \arguments{
-\item{rmdname}{character name of the report}
+\item{rmdname}{character name of the input Rmd report (Index.Rmd)}
+
+\item{out.html}{character name of the output html report (Index.html)}
 
 \item{quiet}{logical suppress printing}
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_data.R
 \name{build_data}
 \alias{build_data}
-\title{It renders the Article Rmd report}
+\title{It builds the data input of the Rmd article and places them in inst/bag_data folder is writerds = TRUE}
 \usage{
 build_data(url = bag_api_url, agemap = ageclassMap, writerds = TRUE)
 }
@@ -14,5 +14,5 @@ build_data(url = bag_api_url, agemap = ageclassMap, writerds = TRUE)
 \item{writerds}{logical write RDS files}
 }
 \description{
-It renders the Article Rmd report
+It builds the data input of the Rmd article and places them in inst/bag_data folder is writerds = TRUE
 }

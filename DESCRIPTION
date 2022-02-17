@@ -16,7 +16,7 @@ Imports:
     htmltools,
     jsonlite,
     lubridate,
-    markdown,
+    pkgload,
     plotly,
     processx,
     RCurl,

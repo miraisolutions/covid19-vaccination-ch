@@ -1,3 +1,15 @@
+test_that("rescale_unknown works", {
+  #data <- readRDS("tests/testthat/data/DataTab.rds")
+  data <- readRDS("data/DataTab.rds")
+  
+  data_scale <- rescale_unknown(data)
+  expect_true(nrow(data_scale)>0, label = "data_scale does not return rows")
+  expect_true(sum(is.na(data_scale$value)) == 0, label = "data_scale returns NAs")
+  expect_equal(names(data_scale), c("AsOfDate","AgeClass","Status", "Case","value"), 
+               label = "Column names of the result of data_scale are incorrect")
+  
+})
+
 test_that("make_100k works", {
   #data <- readRDS("tests/testthat/data/DataTabScale.rds")
   data <- readRDS("data/DataTabScale.rds")

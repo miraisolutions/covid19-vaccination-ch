@@ -24,7 +24,10 @@ vac_levels <- function(){
 # UknVaxCol = "white"
 
 #' Color for Current Status
-ProjCol = "tomato4"
+#' @noRd
+col_current_status <- function() {
+  "tomato4"
+}
 
 #' Vac status color vector
 #'
@@ -176,8 +179,8 @@ rescale_unknown <- function(data, by = c("AsOfDate","AgeClass", "Case")) {
   # recompute All
   dataScaleAll = dataScale %>% 
     filter(AgeClass != "All") %>% arrange(Case) %>% 
-    group_by(.dots = c(setdiff(by, "AgeClass"), "Status")) %>% 
-    #group_by(across(all_of(setdiff(by, "AgeClass"), "Status"))) %>%  
+    #group_by(.dots = c(setdiff(by, "AgeClass"), "Status")) %>% 
+    group_by(across(all_of(c(setdiff(by, "AgeClass"), "Status")))) %>%  
     #this should work, to be testes
     summarise(across(where(is.numeric), sum, na.rm = TRUE)) %>%
     ungroup() %>%

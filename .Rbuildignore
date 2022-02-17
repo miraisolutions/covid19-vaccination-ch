@@ -8,3 +8,5 @@
 ^man-roxygen$
 ^rsconnect$
 ^\.github$
+^app\.R$
+^Index\.Rmd$

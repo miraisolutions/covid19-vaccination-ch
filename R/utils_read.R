@@ -9,6 +9,7 @@ ageclassMap <- data.frame(
   # Exclude unknown
   ageclass = c("0 - 9", "10 - 19", "20 - 29", "30 - 39", "40 - 49", "50 - 59", "60 - 69", "70 - 79", "80+" ),
   AgeClass = c("0-19",  "0-19",    "20-39",   "20-39",   "40-59",   "40-59",   "60-79",   "60-79",   "80+" ),
+  AgeClass2 = c("0-39", "0-39",    "0-39",    "0-39",    "40-69",   "40-69",   "40-69",   "70+",  "70+"),
   # AgeClass = c("0 - 29", "0 - 29", "0 - 29", "30 - 49", "30 - 49", "50 - 69", "50 - 69", "60 - 79", "80+" ),
   stringsAsFactors = FALSE
 )
@@ -52,16 +53,19 @@ read_bag_data_vac <- function(bag.admin.url, ageclassMap) {
     data %>% filter(Week %in% dateweek & geoRegion == region & vaccination_status != "fully_vaccinated") %>%
       rename(ageclass = altersklasse_covid19, {{var_vax}} := entries, {{var_tot}} := sumTotal) %>%
       mutate(AgeClass = ageclassMap$AgeClass[match(ageclass, ageclassMap$ageclass)],
+             AgeClass2 = ageclassMap$AgeClass2[match(ageclass, ageclassMap$ageclass)],
              AsOfDate = substring(version, 1, 10)) %>%
-      mutate(AgeClass = ifelse(ageclass == "all", "All", AgeClass)) %>%
-      mutate(AgeClass = ifelse(is.na(AgeClass), "unknown", AgeClass)) %>%
+      mutate(AgeClass = ifelse(ageclass == "all", "All", AgeClass), 
+             AgeClass2 = ifelse(ageclass == "all", "All", AgeClass2)) %>%
+      mutate(AgeClass = ifelse(is.na(AgeClass), "unknown", AgeClass),
+             AgeClass2 = ifelse(is.na(AgeClass2), "unknown", AgeClass2)) %>%
       mutate(vaccination_status = factor(
         vaccination_status,
         levels = c(vac_levels()),
         labels = c(names(vac_levels()))
         
       )) %>%
-      select(Week, AsOfDate, geoRegion, ageclass, AgeClass, vaccination_status, pop, !!var_vax, !!var_tot)
+      select(Week, AsOfDate, geoRegion, ageclass, AgeClass, AgeClass2, vaccination_status, pop, !!var_vax, !!var_tot)
   }
   
   HOSP.VAC <- .clean_cases_vac(HOSP.VAC.J, dateweek, var = "hosp")
@@ -74,7 +78,7 @@ read_bag_data_vac <- function(bag.admin.url, ageclassMap) {
   
   RES <- 
     merge(HOSP.VAC, DEATH.VAC %>% select(-pop),
-          by = c("AsOfDate", "Week", "geoRegion", "ageclass", "AgeClass", "vaccination_status"), sort = FALSE)
+          by = c("AsOfDate", "Week", "geoRegion", "ageclass", "AgeClass", "AgeClass2", "vaccination_status"), sort = FALSE)
   
   RES
 }
@@ -110,15 +114,17 @@ read_bag_data_cases <- function(bag.admin.url, ageclassMap, dateweek = NULL) {
              # {{growth_fact}} := entries_diff_pct, {{diff}} := entries_diff_abs)
       ) %>%
       mutate(AgeClass = ageclassMap$AgeClass[match(ageclass, ageclassMap$ageclass)],
+             AgeClass2 = ageclassMap$AgeClass2[match(ageclass, ageclassMap$ageclass)],
              AsOfDate = substring(version, 1, 10)) %>%
-      mutate(AgeClass = ifelse(is.na(AgeClass),"unknown",AgeClass)) %>%
-      select(Week, AsOfDate, geoRegion, ageclass, AgeClass, !!var, !!var_tot, pop) #, !!growth_fact, !!diff)
+      mutate(AgeClass = ifelse(is.na(AgeClass),"unknown",AgeClass),
+             AgeClass2 = ifelse(is.na(AgeClass2),"unknown",AgeClass2)) %>%
+      select(Week, AsOfDate, geoRegion, ageclass, AgeClass, AgeClass2, !!var, !!var_tot, pop) #, !!growth_fact, !!diff)
     
     res_age_tot <-  res %>%
       group_by(Week,AsOfDate,geoRegion) %>%
       summarize(across(where(is.numeric), sum, na.rm = TRUE)) %>%
       ungroup() %>%
-      mutate(ageclass = "All", AgeClass = "All")
+      mutate(ageclass = "All", AgeClass = "All", AgeClass2 = "All")
     
     res <- bind_rows(res, res_age_tot) %>%
       arrange(desc(Week),desc(ageclass))
