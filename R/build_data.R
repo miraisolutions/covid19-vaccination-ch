@@ -47,6 +47,13 @@ build_data <- function(url = bag_api_url, agemap = ageclassMap, writerds = TRUE)
   
   message("Weeks for lineplot: ", paste(week_to_consider, collapse = ","))
   
+  aggrvars = names(DATA.AGG2) [sapply(DATA.AGG2, is.numeric)] %>%
+    grep(pattern = "_tot$", value = TRUE, invert = TRUE)  %>%
+    grep(pattern = "^pop", value = TRUE, invert = TRUE)
+  
+  cumvars = setdiff(names(DATA.AGG2)[sapply(DATA.AGG2, is.numeric)], aggrvars)
+  
+  
   for (week in week_to_consider) {
     last4weeks = rev(unique(DATA.AGG2$Week)[which(unique(DATA.AGG2$Week) == week) - 0:3])
     DataMonth = DATA.AGG2 %>% filter(Week %in% last4weeks)
