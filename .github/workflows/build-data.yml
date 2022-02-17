@@ -82,6 +82,6 @@ jobs:
           git config --local user.name "$GITHUB_ACTOR"
           git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
           git add inst/bag_data/\*
-          git commit -m "Update BAG data" || echo "No changes to commit"
+          git commit -m "GitHubActions: Update BAG data" || echo "GitHubActions: No changes to commit"
           git pull --ff-only
-          git push
+          git push origin
