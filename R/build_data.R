@@ -27,10 +27,6 @@ build_data <- function(url = bag_api_url, agemap = ageclassMap, writerds = TRUE)
     select(-ageclass) %>%
     rbind(c("All", "All")) %>% rbind(c("unknown","All"))
   
-  # DATA2 <- DATA %>% 
-  #   mutate(AgeClass2 = ageclassMap2$AgeClass2[match(AgeClass, ageclassMap2$AgeClass)])
-  
-  
   DATA.AGG2 = DATA %>%
     group_by(Week,AgeClass2, vaccination_status ) %>%
     summarise_if(is.numeric, sum, na.rm = TRUE) %>%
