@@ -84,4 +84,4 @@ jobs:
           git add inst/bag_data/\*
           git commit -m "Update BAG data" || echo "No changes to commit"
           git pull --ff-only
-          git push origin
+          git push
