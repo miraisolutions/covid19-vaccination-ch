@@ -2,9 +2,12 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 
 # Triggered on push and pull request events
-on:
-  schedule:
-    - cron: "30 * * * *"
+# on:
+#   schedule:
+#     - cron: "30 * * * *"
+
+# test on push
+on: [push]
 
 # Name of the workflow => usethis::use_github_actions_badge("CI-CD-renv")
 
