@@ -11,9 +11,7 @@ report_path <- function() {
 data_path <- function() {
   system.file("bag_data", package = "covid19vaccinationch")  
   #"inst/bag_data"
-  
 }
-
 
 #' It renders the Article Rmd report
 #'
@@ -29,5 +27,6 @@ run_report <- function(rmdname = "Index.Rmd", out.html = "Index.html", quiet = T
     stop("rmdname must be a .Rmd file")
   rmarkdown::render(file.path(report_path(), rmdname), output_file = out.html,
                     quiet = quiet, run_pandoc = run_pandoc)
+  # deploy does not work if browseURL is in the pkg
   #browseURL(out.html)
 }
