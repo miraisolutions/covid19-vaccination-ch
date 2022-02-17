@@ -24,6 +24,7 @@ vac_levels <- function(){
 # UknVaxCol = "white"
 
 #' Color for Current Status
+#' 
 #' @noRd
 col_current_status <- function() {
   "tomato4"
@@ -44,7 +45,7 @@ vac_levels_colors <- function(){
   names(levcols) <- names(vac_levels())
   levcols
 }
-#' pick Label given vac status
+#' Pick Label given vac status
 #' 
 #' @param x character vaccination status from `vac_levels()`
 #' @noRd
@@ -55,7 +56,7 @@ pick_vac_lev <- function(x) {
   as.character(names(levs))
 }
 
-#' pick color given vac status
+#' Pick color given vac status
 #' 
 #' @param x character vaccination status from `vac_levels()`
 #' @noRd
