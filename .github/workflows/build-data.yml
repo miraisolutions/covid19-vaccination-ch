@@ -59,5 +59,6 @@ jobs:
 
       - name: Run R build data script
         run: |
-          covid19vaccinationch:::build_data()
+          pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
+          build_data()
         shell: Rscript {0}
