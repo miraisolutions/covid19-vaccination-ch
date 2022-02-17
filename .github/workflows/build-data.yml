@@ -7,8 +7,15 @@
 #     - cron: "30 * * * *"
 
 # test on push
-on: [push]
+# on: [push]
 
+# test push only yml file 
+on:
+  push:
+    paths: [".github/workflows/**"]
+  pull_request:
+    paths: [".github/workflows/**"]
+    
 # Name of the workflow => usethis::use_github_actions_badge("CI-CD-renv")
 
 name: BUILD-DATA
@@ -62,3 +69,12 @@ jobs:
           pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
           build_data()
         shell: Rscript {0}
+        
+      # - name: Commit and push changes
+      #   run: |
+      #     git config --local user.name "$GITHUB_ACTOR"
+      #     git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      #     git add inst/bag_data/\*
+      #     git commit -m "Update BAG data" || echo "No changes to commit"
+      #     git pull --ff-only
+      #     git push origin
