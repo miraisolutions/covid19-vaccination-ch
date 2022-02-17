@@ -29,5 +29,5 @@ run_report <- function(rmdname = "Index.Rmd", out.html = "Index.html", quiet = T
     stop("rmdname must be a .Rmd file")
   rmarkdown::render(file.path(report_path(), rmdname), output_file = out.html,
                     quiet = quiet, run_pandoc = run_pandoc)
-  browseURL(out.html)
+  #browseURL(out.html)
 }
