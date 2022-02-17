@@ -6,11 +6,11 @@ bag_api_url <- "https://www.covid19.admin.ch/api/data/context/"
 #'
 #' @noRd
 ageclassMap <- data.frame(
-  # Exclude unknown
+  # Exclude unknown and all
   ageclass = c("0 - 9", "10 - 19", "20 - 29", "30 - 39", "40 - 49", "50 - 59", "60 - 69", "70 - 79", "80+" ),
   AgeClass = c("0-19",  "0-19",    "20-39",   "20-39",   "40-59",   "40-59",   "60-79",   "60-79",   "80+" ),
+  # ageclass file lineplot
   AgeClass2 = c("0-39", "0-39",    "0-39",    "0-39",    "40-69",   "40-69",   "40-69",   "70+",  "70+"),
-  # AgeClass = c("0 - 29", "0 - 29", "0 - 29", "30 - 49", "30 - 49", "50 - 69", "50 - 69", "60 - 79", "80+" ),
   stringsAsFactors = FALSE
 )
 
@@ -132,7 +132,6 @@ read_bag_data_cases <- function(bag.admin.url, ageclassMap, dateweek = NULL) {
   }
   
   CASES = .clean_cases(CASES.J, dateweek)
-  
   
   CASES
 }
