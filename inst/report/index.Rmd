@@ -13,10 +13,11 @@ knitr::opts_chunk$set(echo = FALSE, collapse = FALSE, comment = "")
 # knitr::opts_chunk$set(echo = FALSE, prompt = FALSE, collapse = FALSE)
 # def.chunk.hook  <- knitr::knit_hooks$get("chunk")
 # important to fix it, as this is set dynamically by RStudio
-pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
-
 options(width = 80)
 
+if (!requireNamespace("covid19vaccinationch")) {
+  pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
+}
 library(covid19vaccinationch)
 library(jsonlite)
 library(RCurl)
