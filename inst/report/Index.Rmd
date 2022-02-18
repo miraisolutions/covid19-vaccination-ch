@@ -50,13 +50,11 @@ Since May 2020 <span style="background-color: #dfc77f">**Mirai Solutions**</span
 In October and December 2021 we published 2 articles ["A closer look at Vaccination breakthroughs in Switzerland"](https://mirai-solutions.ch/news/2021/10/20/covid19-vaccination-breakthroughs-switzerland/) and ["A 2nd look at Vaccination breakthroughs in Switzerland"](https://mirai-solutions.ch/news/2021/12/06/covid19-vaccination-breakthroughs-ch-v2/), where we showed how to read data from the [Swiss Federal Office for Public Health (BAG)](https://www.bag.admin.ch/bag/en/home.html) in R, and illustrated the difference in *Hospitalizations* and *Deaths* between **Vaccinated** and **Unvaccinated** during the weeks in October and December.   
 Here we provide a live update to these articles deployed to [shinyapps.io](https://www.shinyapps.io/) that will always show the latest data from BAG.     
 
-
 ### Reading BAG data
 
 To see how we read BAG data in **R** please refer to the [previous article](https://mirai-solutions.ch/news/2021/10/20/covid19-vaccination-breakthroughs-switzerland/).
 
 We are interested in the weekly BAG reports about vaccination breakthroughs occurred in the last 4 weeks for different age classes. See [data documentation](https://www.covid19.admin.ch/api/data/documentation) and our source: [opendata.swiss](https://opendata.swiss/en/dataset/covid-19-schweiz).
-
 
 ```{r library, echo=FALSE, eval = TRUE}
 # bag_api_url = covid19vaccinationch:::bag_api_url
@@ -83,10 +81,6 @@ bag_sources = jsonlite::fromJSON(bag_api_url)
 # vac_levels = covid19vaccinationch:::vac_levels
 # vac_levels_colors = covid19vaccinationch:::vac_levels_colors
 ```
-
-<!-- # ```{r utilities, include=FALSE} -->
-<!-- # source("utils.22.R") -->
-<!-- # ``` -->
 
 The data documentation makes us aware of the following restrictions and warnings about the collected data:
 
@@ -151,7 +145,6 @@ DATA.AG1M <- aggregate_to_month(DATA.AG4W, period, aggv = aggrvars, cumv = cumva
 CASES.AG1M <- aggregate_to_month(CASES.AG4W, period, by = "AgeClass", 
                                   aggv = "confirmed", cumv = c("pop", "confirmed_tot"))
 
-
 # prepare data for Cases plot
 datacases <- DATA.AG1M %>%
   #select(Week, AgeClass, confirmed, deaths, hosp, vaccination_status, pop) %>%
@@ -179,7 +172,6 @@ datacases <- datacases %>%
   data %>% filter(AgeClass %in% age & Case == case) %>% as.data.frame() %>% .[, val] %>%
     formatC(format = "f", big.mark = "'", digits = 0)
 }
-
 ```
 
 The current situation of the last 4 weeks as of **`r weeks_from_to[2]`**, i.e. how the infections, hospitalizations and deaths occurred across the age classes in absolute terms is shown below. Overall during this period Switzerland has registered <span style="background-color: #dfc77f">**`r .extract_value(datacases, "Infections")`**</span> infections, <span style="background-color: #dfc77f">**`r .extract_value(datacases, "Hospitalizations")`**</span> hospitalizations and <span style="background-color: #dfc77f">**`r .extract_value(datacases, "Deaths")`**</span> deaths.
@@ -268,9 +260,8 @@ TotConfirmed %>%
   tidyHtmlTable(header = Case ,
                 #cgroup = c(Case),
                 rnames = AgeClass,
-                caption = paste("Table 1: Confirmed Infections per Age Class.", weeks_from_to[2])) #%>%
-  # kableExtra::save_kable("table0.png", zoom = 1.45,expand = 10, vwidth = 666)
-  
+                caption = paste("Table 1: Confirmed Infections per Age Class.", weeks_from_to[2])) 
+
 ```
 
 It is worth mentioning other possible sources of bias that can't be isolated, some of these differences could actually cause a bias in both directions.    
@@ -386,7 +377,6 @@ plotcol <- pick_vac_lev_col(c("fully_vaccinated_first_booster", "fully_vaccinate
 StackedBarplotCovid(DataPlot100kScaleRatiosPlot %>% select(-Variable) , g_palette = c(plotcol),
                     X = "AgeClass", FILL = "Status", FACET = "Case", percent = FALSE, title = "Ratio of Unvac. Impact vs Fully Vac", position = "dodge")
 
-
 ```
 ```{r ageclasses-vacc-unvac-scale100k-tab, warning=FALSE, out.width="100%"}
 DataPlot100kScaleRatios %>%
@@ -479,9 +469,7 @@ DataTabp %>%
                 cgroup = Case,
                 rnames = AgeClass,
                 caption = paste("Table 5: Scenarios per age and vaccination status. Reallocation of Unknown vaccination status.", periodLabel),
-                skip_removal_warning = TRUE) #%>%
-  # kableExtra::save_kable("table6.png", zoom = 1.45,expand = 10, vwidth = 666)
-
+                skip_removal_warning = TRUE) 
 ```
 
 
@@ -494,7 +482,6 @@ Figures per 100'000 people are shown again, reallocating those in the "Unknown" 
 
 ```{r ageclasses-timeline-calc, include = FALSE, echo = FALSE}
 ageclasses2 <- sort(unique(ageclassMap$AgeClass2))
-
 
 DataRoll4W100k <- readRDS(file.path(data_path(), "DataRoll4W100k.rds")) %>%
     filter(Status != "Partially vac.") # remove partial vac
@@ -522,7 +509,6 @@ first.week.booster <- DataRoll4W100k %>%
 
 # override values for booster
 DataRoll4W100k <- DataRoll4W100k %>% mutate(Value = ifelse(Status == "Fully vac. Booster" & AsOfDate < as.character(first.week.booster), NA, Value))
-
 
 ```
 
@@ -567,7 +553,6 @@ renderPlotly({
                     FACET = "AgeClass", g_palette = res$col_status, 
                     title = "Time-line of Vac Status per Age Class") })
 ```
-
 
 The ratio between the incidence of "Unvaccinated" vs "Fully Vaccinated" over time gives us a measure of how higher is the risk for the "Unvaccinated" is.
 
@@ -639,6 +624,6 @@ Similar results about the benefits of vaccination are available from other count
 
 If you have any question about the approach, or any suggestion for improvement please do not hesitate to get in [touch](https://mirai-solutions.ch/about/contact/), we would love to hear from you as we may publish further updates to this article.
 
-This page aims also at showing how an **Rmarkdown** article can be posted in **shinyapps.io** to be a live page.
-
+This page article also at showing how an **R Markdown** file can be deployed to **shinyapps.io** to be a live page.
+For details on the architecture of the **covid19vaccinationch** R package that supports this deployment and its installation see the [ReadMe](https://github.com/miraisolutions/covid19-vaccination-ch/blob/main/README.md) on our *GitHub** repository.
 
