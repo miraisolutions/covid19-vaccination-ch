@@ -1,8 +1,11 @@
 Package: covid19vaccinationch
 Title: Vaccination Breakthroughs in CH
 Version: 0.0.0-9000
-Authors@R: person('Guido', 'Maggio', email = 'guido-maggio@mirai-solutions.com', role = c('cre', 'aut'))
-Description: A live article on vaccination breakthroughs in Switzerland, BAG weekly reports are analyzed over time to verify Vaccination benefits
+Authors@R: 
+    person("Guido", "Maggio", , "guido-maggio@mirai-solutions.com", role = c("cre", "aut"))
+Description: A live article on vaccination breakthroughs in Switzerland,
+    BAG weekly reports are analyzed over time to verify vaccination
+    benefits.
 License: GPL (>= 3)
 Depends:
     R (>= 4.0.0)
@@ -18,7 +21,6 @@ Imports:
     lubridate,
     pkgload,
     plotly,
-    processx,
     RCurl,
     rmarkdown,
     scales,
@@ -26,12 +28,12 @@ Imports:
     stringr,
     tidyr,
     tidyselect
-Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.1.2
-Roxygen: list(markdown = TRUE)
 Suggests: 
+    processx,
     rsconnect,
     spelling,
     testthat (>= 3.0.0)
+Encoding: UTF-8
 Language: en-US
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
