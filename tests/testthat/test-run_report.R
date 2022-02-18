@@ -16,6 +16,6 @@ test_that("Running the Rmd report works", {
     stdout = "|", stderr = "|"
   )
   Sys.sleep(5)
-  expect_true(run_process$is_alive())
+  expect_true(run_process$is_alive(), info = run_process$read_all_error())
   run_process$kill()
 })
