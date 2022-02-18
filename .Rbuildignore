@@ -1,12 +1,9 @@
-^renv$
-^renv\.lock$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
-^README\.Rmd$
-^deploy$
 ^man-roxygen$
-^rsconnect$
 ^\.github$
-^app\.R$
-^Index\.Rmd$
+^renv$
+^renv\.lock$
+^deploy$
+^rsconnect$
