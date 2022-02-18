@@ -45,11 +45,7 @@ remotes::install_github("miraisolutions/covid19vaccinationch", build_opts = "")
 ```
 and used to serve the app locally from R via
 ``` r
-covid19vaccinationch::run_report(
-                      rmdname = "Index.Rmd",
-                      out.html = "Index.html"
-                      )
-browseURL("Index.html")
+covid19vaccinationch::run_report()
 ```
 
 ## ShinyApps.io deployment
@@ -57,6 +53,6 @@ browseURL("Index.html")
 The article is being deployed to **Shinyapps.io** as an **Rmarkdown**
 Rmd document.
 
-`Index.Rmd` file contains the article text and the R code that reads and processes the data. Instead of deploying to Shinyapps.io the `app.R` file, it is possible to deploy an Index.Rmd file that will generate `index.html` once rendered. The Rmd article is written with `runtime: shiny` and contains both `ggplot2` / `plotly` graphs and `shiny` dynamic charts.
+`index.Rmd` file contains the article text and the R code that reads and processes the data. Instead of deploying to Shinyapps.io the `app.R` file, it is possible to deploy an index.Rmd file that will generate `index.html` once rendered. The Rmd article is written with `runtime: shiny` and contains both `ggplot2` / `plotly` graphs and `shiny` dynamic charts.
 
 

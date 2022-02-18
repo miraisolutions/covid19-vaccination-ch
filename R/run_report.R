@@ -1,32 +1,20 @@
 #' Path of the Rmd file containing the article
-#' 
+#'
 #' @noRd
 report_path <- function() {
-  system.file("report", package = "covid19vaccinationch")  
-  #"."
+  system.file("report", package = "covid19vaccinationch")
 }
 #' Data path
-#' 
+#'
 #' @noRd
 data_path <- function() {
-  system.file("bag_data", package = "covid19vaccinationch")  
-  #"inst/bag_data"
+  system.file("bag_data", package = "covid19vaccinationch")
 }
 
-#' It renders the Article Rmd report
+#' Run the Rmd report
 #'
-#' @param rmdname character name of the input Rmd report (Index.Rmd)
-#' @param out.html character name of the output html report (Index.html)
-#' @param quiet logical suppress printing
-#' @param run_pandoc logical run_pandoc argument of render
-#'
-#' @importFrom rmarkdown render
+#' @param ... Additional arguments to [rmarkdown::run()].
 #' @export
-run_report <- function(rmdname = "Index.Rmd", out.html = "Index.html", quiet = TRUE, run_pandoc = TRUE) {
-  if (!grepl(".Rmd$", rmdname))
-    stop("rmdname must be a .Rmd file")
-  rmarkdown::render(file.path(report_path(), rmdname), output_file = out.html,
-                    quiet = quiet, run_pandoc = run_pandoc)
-  # deploy does not work if browseURL is in the pkg
-  #browseURL(out.html)
+run_report <- function(...) {
+  rmarkdown::run(file.path(report_path(), "index.Rmd"), ...)
 }

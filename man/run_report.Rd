@@ -2,24 +2,13 @@
 % Please edit documentation in R/run_report.R
 \name{run_report}
 \alias{run_report}
-\title{It renders the Article Rmd report}
+\title{Run the Rmd report}
 \usage{
-run_report(
-  rmdname = "Index.Rmd",
-  out.html = "Index.html",
-  quiet = TRUE,
-  run_pandoc = TRUE
-)
+run_report(...)
 }
 \arguments{
-\item{rmdname}{character name of the input Rmd report (Index.Rmd)}
-
-\item{out.html}{character name of the output html report (Index.html)}
-
-\item{quiet}{logical suppress printing}
-
-\item{run_pandoc}{logical run_pandoc argument of render}
+\item{...}{Additional arguments to \code{\link[rmarkdown:run]{rmarkdown::run()}}.}
 }
 \description{
-It renders the Article Rmd report
+Run the Rmd report
 }
