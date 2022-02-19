@@ -50,9 +50,8 @@ covid19vaccinationch::run_report()
 
 ## ShinyApps.io deployment
 
-The article is being deployed to **Shinyapps.io** as an **Rmarkdown**
-Rmd document.
+The article is being deployed to **Shinyapps.io** as an **Rmarkdown** Rmd document.
 
-`index.Rmd` file contains the article text and the R code that reads and processes the data. Instead of deploying to Shinyapps.io the `app.R` file, it is possible to deploy an index.Rmd file that will generate `index.html` once rendered. The Rmd article is written with `runtime: shiny` and contains both `ggplot2` / `plotly` graphs and `shiny` dynamic charts.
+`index.Rmd` file contains the article text and the R code that reads and processes the data. Instead of deploying to Shinyapps.io the `app.R` file, it is possible to deploy an index.Rmd file that will generate `Index.html` once rendered. The Rmd article is written with `runtime: shiny` and contains both `ggplot2` / `plotly` graphs and `shiny` dynamic charts.
 
 
