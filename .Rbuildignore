@@ -1,0 +1,9 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^man-roxygen$
+^\.github$
+^renv$
+^renv\.lock$
+^deploy$
+^rsconnect$

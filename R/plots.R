@@ -135,35 +135,41 @@
   x.d.breaks <- seq(x.d.lim[1], x.d.lim[2], length.out = breaks)
   x.d.breaks
 }
-#' breaks for X Y Axis
+#' generic plot theme
 #'
-#' @param x numeric vector
-#' @param breaks integer number of breaks
+#' @param facet logical if TRUE then the graph is facet
 #' 
 #' @import ggplot2
 #'
 #' @noRd
 .basic_plot_theme <- function(facet = TRUE) {
+
+  .sizetext <- function(facet) {
+    ifelse(facet, 9, 10)
+  }
+    
   theme(
     plot.title = element_text(color = "grey45", size = 12,
                               face = "bold.italic", hjust = 0.5),
     text = element_text(size = 10),
     #title = element_text(size = 12),
-    panel.background = element_blank(),
+    panel.background = element_rect(fill = "grey90"),
     panel.grid.major = element_line(colour = "white", size = 0.3),
     panel.grid.minor = element_line(colour = "white", size = 0.1),
-    panel.spacing.x = unit(0.75, "points"),
+    # panel.spacing.x = unit(1, "points"),
+    panel.spacing.x = unit(2, "lines"),
     line = element_line(size = 2.2),
     axis.line.x = element_line(color = "grey45", size = 0.5),
     axis.line.y = element_line(color = "grey45", size = 0.5),
-    axis.text.x = element_text(size = ifelse(facet, 9.5, 10.5),
+    axis.text.x = element_text(size = .sizetext(facet),
                                angle = 30, hjust = 1),
-    axis.text.y = element_text(size = ifelse(facet, 9.5, 10.5)),
+    axis.text.y = element_text(size = .sizetext(facet)),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     legend.title = element_blank(),
-    legend.text = element_text(size = ifelse(facet, 9.5, 10.5)),
-    legend.key = element_rect(fill = alpha("white", 0))
+    legend.text = element_text(size = .sizetext(facet)),
+    legend.key = element_rect(fill = alpha("white", 0)),
+    legend.justification = "center"
   )
 }
 
@@ -186,6 +192,29 @@
 #' length breaks of y axis
 .breaks.yaxis <- 6
 
+#' Plot legend parameters
+#'
+#' @param facet logical if TRUE the graph is facet, text size will be smaller
+#'
+#' @noRd
+legend_pars <- function(facet) {
+  list(
+    title = "",
+    font = list(
+      family = "sans-serif",
+      size = ifelse(facet, 9, 10),
+      color = "#000"),
+    bgcolor = "#E2E2E2",
+    bordercolor = "#FFFFFF",
+    borderwidth = 2,
+    orientation = 'h', #, y = 1.2
+    x = 0.5,
+    xanchor = "center",
+    yanchor = "top",
+    clickmode = "event"
+  )
+}
+
 #' Barplot function
 #'
 #' @param df data.frame data
@@ -194,8 +223,6 @@
 #' @param percent logical if TRUE then data and labels are in %
 #' @param g_palette character vector of colors for the graph
 #' @param percent logical if TRUE then data and labels are in %
-#' @param labsize numeric label size
-#' @param labangle numeric label angle
 #' @param position character position of barplot, fill
 #' @param title character
 #' 
@@ -204,8 +231,7 @@
 #' @importFrom scales pretty_breaks
 #' 
 #' @noRd
-BarplotCovid <- function(df, X, FACET, percent = FALSE, g_palette,
-                         labsize = 8.5, labangle = 30, position = "fill", title = "") {
+BarplotCovid <- function(df, X, FACET, percent = FALSE, g_palette, position = "fill", title = "") {
   
   if (nrow(df) == 0 || all(is.na(df$Value))) {
     p <- ggplot()
@@ -259,10 +285,10 @@ BarplotCovid <- function(df, X, FACET, percent = FALSE, g_palette,
   }
   p <- p +
     .basic_plot_theme(facet = barplotfacet) +
-    theme(panel.background = element_rect(fill = "grey90")) + # set grey background
-    theme(
-      axis.text.x = element_text(angle = labangle, size = labsize)
-    ) +
+    # theme(panel.background = element_rect(fill = "grey90")) + # set grey background
+    # theme(
+    #   axis.text.x = element_text(angle = labangle, size = labsize)
+    # ) +
     ggtitle(title) #+
   #xlab(unique(df$AsOfDate))
   
@@ -330,21 +356,27 @@ BarplotCovid <- function(df, X, FACET, percent = FALSE, g_palette,
                                  originalData = FALSE
   )
   
-  if (any(traces == "remove"))
-    pply <- pply %>% plotly::style(hoverinfo = "skip", traces = which(traces == "remove"))
+  # if (any(traces == "remove"))
+  #   pply <- pply %>% plotly::style(hoverinfo = "skip", traces = which(traces == "remove"))
   pply <- pply %>%
+    #plotly::config(displayModeBar = F)  %>%
     #plotly::style(hoverinfo = "text") %>%
     plotly::layout(
-      hovermode = 'closest', clickmode = "event",
-      xaxis = list(autorange = TRUE, fixedrange = TRUE),
+      hovermode = 'closest', clickmode = 'none', #clickmode = "event",
+      #xaxis = list(autorange = TRUE, fixedrange = TRUE),
       showlegend = showLegend,
-      legend = list(title = "", size = 10.5),
-      xaxis = list(zerolinewidth = 4),
-      yaxis = list(zerolinewidth = 4)
+      legend = legend_pars(barplotfacet),
+      dragmode = FALSE,
+      # xaxis = list(#zerolinewidth = 4., 
+      #              #autorange = TRUE, 
+      #             fixedrange = TRUE),
+      yaxis = list(#fixedrange = TRUE, 
+                   zerolinewidth = 4)
     )
-  p <- pply
-
-  p
+  if (any(traces == "remove"))
+    pply <- pply %>% plotly::style(hoverinfo = "skip", traces = which(traces == "remove"))
+  
+  pply
 }
 
 #' Stacked Barplot function
@@ -356,8 +388,6 @@ BarplotCovid <- function(df, X, FACET, percent = FALSE, g_palette,
 #' @param percent logical if TRUE then data and labels are in %
 #' @param g_palette character vector of colors for the graph
 #' @param percent logical if TRUE then data and labels are in %
-#' @param labsize numeric label size
-#' @param labangle numeric label angle
 #' @param position character position of barplot, fill
 #' @param title character
 #' 
@@ -368,7 +398,7 @@ BarplotCovid <- function(df, X, FACET, percent = FALSE, g_palette,
 #' 
 #' @noRd
 StackedBarplotCovid <- function(df, X, FILL, FACET, percent = FALSE, g_palette,
-                                labsize = 8.5, labangle = 30, position = "fill", title = "") {
+                                position = "fill", title = "") {
   
   if (nrow(df) == 0 || all(is.na(df$Value))) {
     p <- ggplot()
@@ -405,7 +435,7 @@ StackedBarplotCovid <- function(df, X, FILL, FACET, percent = FALSE, g_palette,
   } else  {
     groupvars = X
   }
-
+  # calculate percentages for tooltips
   df <- df %>% group_by(across(all_of(groupvars))) %>% 
     mutate(Percentage = Value/sum(Value, na.rm = TRUE)*100) %>%
     ungroup()
@@ -415,10 +445,12 @@ StackedBarplotCovid <- function(df, X, FILL, FACET, percent = FALSE, g_palette,
   } else  {
     digits <-NULL
   }
+  # percentages not to be in popup text if percent = TRUE and if it is not dodge
   percprint = ifelse(!percent && position != "dodge", TRUE, FALSE)
   
-  p <- ggplot(df, aes(x = .data[[X]], y = Value, fill = .data[[FILL]], #color = g_palette,
-                      text = .popuptext(AsOfDate, Value, percent, digits, perc = Percentage, percprint = percprint)),
+  p <- ggplot(df, aes(x = .data[[X]], y = Value, fill = .data[[FILL]], 
+                      text = .popuptext(AsOfDate, Value, percent, digits, 
+                                        perc = Percentage, percprint = percprint)),
               color = "black"
   ) +
     geom_col(position = position, na.rm = TRUE) +
@@ -448,10 +480,10 @@ StackedBarplotCovid <- function(df, X, FILL, FACET, percent = FALSE, g_palette,
   }
   p <- p +
     .basic_plot_theme(facet = barplotfacet) +
-    theme(panel.background = element_rect(fill = "grey90")) + # set grey background
-    theme(
-      axis.text.x = element_text(angle = labangle, size = labsize)
-    ) +
+    # theme(panel.background = element_rect(fill = "grey90")) + # set grey background
+    # theme(
+    #   axis.text.x = element_text(angle = labangle, size = labsize)
+    # ) +
     ggtitle(title) 
   
   labfun <- ifelse(percentLab, .lab_percent, .lab_num)
@@ -504,22 +536,28 @@ StackedBarplotCovid <- function(df, X, FILL, FACET, percent = FALSE, g_palette,
                                  layerData = 1,
                                  #dynamicTicks = TRUE,
                                  #textposition = 'outside'
-                                 originalData = FALSE
-  )
+                                 originalData = FALSE)
   if (any(traces == "remove"))
     pply <- pply %>% plotly::style(hoverinfo = "skip", traces = which(traces == "remove"))
+  
   pply <- pply %>%
+    #plotly::config(displayModeBar = F)  %>%
     plotly::layout(
-      hovermode = 'closest', clickmode = "event",
-      xaxis = list(autorange = TRUE, fixedrange = TRUE),
+      hovermode = 'closest', clickmode = "none", #event
+      #xaxis = list(autorange = TRUE), 
       showlegend = showLegend,
-      legend = list(title = "", size = 10.5),
-      xaxis = list(zerolinewidth = 4),
-      yaxis = list(zerolinewidth = 4)
+      legend = legend_pars(barplotfacet),
+      dragmode = FALSE,
+      # xaxis = list(#zerolinewidth = 4., 
+      #              #autorange = TRUE, 
+      #              fixedrange = TRUE),
+      yaxis = list(#fixedrange = TRUE, 
+                   zerolinewidth = 4)
     )
-  p <- pply
 
-  p
+  
+  pply
+
 }
 
 #' Line Plot function
@@ -529,8 +567,6 @@ StackedBarplotCovid <- function(df, X, FILL, FACET, percent = FALSE, g_palette,
 #' @param percent logical if TRUE then data and labels are in %
 #' @param g_palette character vector of colors for the graph
 #' @param percent logical if TRUE then data and labels are in %
-#' @param labsize numeric label size
-#' @param labangle numeric label angle
 #' @param title character
 #' 
 #' @import ggplot2
@@ -540,7 +576,7 @@ StackedBarplotCovid <- function(df, X, FILL, FACET, percent = FALSE, g_palette,
 #' 
 #' @noRd
 LinePlotCovid <- function(df, FACET = "AgeClass", g_palette, percent = FALSE,
-                          labsize = 8.5, labangle = 30, title = "Time-line of Records per Age class") {
+                          title = "Time-line of Records per Age class") {
   
   if (nrow(df) == 0 || all(is.na(df$Value))) {
     p <- ggplot()
@@ -618,11 +654,13 @@ LinePlotCovid <- function(df, FACET = "AgeClass", g_palette, percent = FALSE,
     scale_color_manual(values = g_palette) +
     scale_y_continuous(labels = .ylabfun, breaks = pretty_breaks(.breaks.yaxis)) +
     scale_x_continuous(labels = xlabels, breaks = xbreaks) + 
-    theme(panel.background = element_rect(fill = "grey90")) + # set grey background
-    theme(
-      axis.text.x = element_text(angle = labangle, size = labsize),
-      legend.position = "top"
-    ) +
+    theme(#panel.background = element_rect(fill = "grey90"), 
+          panel.spacing.x = unit(0.25, "lines"),
+    ) + # set grey background
+    # theme(
+    #   axis.text.x = element_text(angle = labangle, size = labsize),
+    #   legend.position = "top"
+    # ) +
     ggtitle(title)
   
   weeks_line <- weeks_to_date(unique(df$AsOfDate), range = FALSE)
@@ -665,17 +703,19 @@ LinePlotCovid <- function(df, FACET = "AgeClass", g_palette, percent = FALSE,
   )
   # not easy to ger the number of traces for the months
   # pply <- pply %>% plotly::style(hoverinfo = "skip", traces = 4)
+
+
   
   pply <- pply %>%
     plotly::layout(
-      hovermode = 'closest', #clickmode = "event",
+      hovermode = 'closest', clickmode = "event",
       #hovermode = 'x', #clickmode = "event",
       showlegend = TRUE,
-      legend = list(title = "", size = 10.5, #orientation = 'h'
-                    orientation = "h",  clickmode = "event", x = 0.25
-      ), # to be placed on top
+      legend = legend_pars(TRUE),
+      dragmode = FALSE,
       xaxis = list(zerolinewidth = 2)
-      # yaxis = list(zerolinewidth = 4)
+      # yaxis = list(#autorange = TRUE, 
+      #   fixedrange = TRUE)
     )
   p <- pply
   p

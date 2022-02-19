@@ -37,7 +37,7 @@ test_that("reading vaccination data works", {
   expect_equal(levels(DATA$vaccination_status), names(vac_levels()), 
                label = "Vaccination Levels do not correspond to expected")
   expect_equal(names(DATA), 
-               c("AsOfDate","Week","geoRegion","ageclass","AgeClass","vaccination_status","pop","hosp","hosp_tot",
+               c("AsOfDate","Week","geoRegion","ageclass","AgeClass","AgeClass2","vaccination_status","pop","hosp","hosp_tot",
 "deaths","deaths_tot"), 
                label = "Expected columns are not returned")
   expect_true(sum(is.na(DATA[, c("hosp", "deaths", "hosp_tot", "deaths_tot")])) == 0, 
@@ -52,7 +52,7 @@ test_that("reading case data works", {
               label = "read_bag_data_cases dows not return rows")
 
   expect_equal(names(CASES), 
-               c("Week","AsOfDate","geoRegion","ageclass","AgeClass","confirmed","confirmed_tot","pop"), 
+               c("Week","AsOfDate","geoRegion","ageclass","AgeClass","AgeClass2","confirmed","confirmed_tot","pop"), 
                label = "Expected columns are not returned")
   expect_true(sum(is.na(CASES[, c("confirmed" , "confirmed_tot")])) == 0, 
               label = "NAs present in 'confirmed' variables")

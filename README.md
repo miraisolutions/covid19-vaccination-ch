@@ -1,19 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# vacreportch
+# covid19vaccinationch
 
-<!-- badges: start -->
-
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-<!-- badges: end -->
-
-The goal of `vacreportch` is to provide a dashboard article analyzing
-the weekly Vaccination report from
-\[**BAG**\]\](<https://www.bag.admin.ch/bag/en/home.html>) (Bundesamt
-für Gesundheit - Swiss Federal Office for Public Health) collecting the
-data from the past 4 weeks..
+The goal of `covid19vaccinationch` is to provide a dashboard article
+analyzing the weekly Vaccination report from
+[**BAG**](https://www.bag.admin.ch/bag/en/home.html) (BundesAmt für
+Gesundheit - Swiss Federal Office for Public Health) collecting the data
+from the past 4 weeks..
 
 “Vaccinated” are split into 3 categories:  
 - *Fully Vaccinated with Booster*  
@@ -26,7 +20,7 @@ Hospitalized and Deaths rates withing the 4 populations are compared to
 derive who is more at risk. The following measures are shown in the
 article:  
 - Hospitalized / Deaths counts  
-- Hospitalized / Deaths per 100’000 people
+- Hospitalized / Deaths per 100'000 people
 
 Entries with “Unknown” vaccination status are allocated to the 4
 populations proportionally. Infection cases cannot be used for
@@ -37,7 +31,27 @@ BAG updates the data daily also for the past weeks (delay in
 communication) the presented results are also updated. A new week is
 published by BAG on Monday.
 
-# ShinyApps.io deployment
+It is expected that upon data structure changes from BAG this
+application may fail to initialize. An update will be then provided
+within short time.
 
-The article is being deployed to **Shinyapps.io** as an **Rmarkdown**
-Rmd document.
+## Installing package covid19vaccinationch
+
+The **covid19vaccinationch** Shiny app is [deployed](gke#readme) to **ShinyApps.io** and can be accessed at https://mirai-solutions.ch/gallery/covid19-vaccination-ch.   
+The App is structured as an R package that can be installed from GitHub with
+<!-- argument build_vignettes not available anymore (r-lib/remotes#353), build_opts = "" for a full installation including vignettes  -->
+``` r
+remotes::install_github("miraisolutions/covid19vaccinationch", build_opts = "")
+```
+and used to serve the app locally from R via
+``` r
+covid19vaccinationch::run_report()
+```
+
+## ShinyApps.io deployment
+
+The article is being deployed to **Shinyapps.io** as an **Rmarkdown** Rmd document.
+
+`index.Rmd` file contains the article text and the R code that reads and processes the data. Instead of deploying to Shinyapps.io the `app.R` file, it is possible to deploy an index.Rmd file that will generate `Index.html` once rendered. The Rmd article is written with `runtime: shiny` and contains both `ggplot2` / `plotly` graphs and `shiny` dynamic charts.
+
+

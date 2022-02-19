@@ -5,9 +5,19 @@ rsconnect::setAccountInfo(
   Sys.getenv("SHINYAPPS_TOKEN"),
   Sys.getenv("SHINYAPPS_SECRET")
 )
+
+file.copy("inst/report/index.Rmd", "index.Rmd", overwrite = TRUE)
+# 
 rsconnect::deployApp(
   account = "miraisolutions",
-  appName = "vacreportch",
-  # exclude hidden files and renv directory (if present)
-  appFiles = setdiff(list.files(), "renv")
+  #appDir = "inst/report",
+  #appPrimaryDoc = "inst/report/index.Rmd",
+  appName = "covid19-vaccination-ch",
 )
+
+# rsconnect::deployDoc(
+#   account = "miraisolutions",
+#   #appDir = "inst/report",
+#   doc = "inst/report/Index.Rmd",
+#   appName = "covid19-vaccination-ch",
+# )
