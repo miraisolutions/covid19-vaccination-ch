@@ -15,11 +15,10 @@ knitr::opts_chunk$set(echo = FALSE, collapse = FALSE, comment = "")
 # def.chunk.hook  <- knitr::knit_hooks$get("chunk")
 # important to fix it, as this is set dynamically by RStudio
 options(width = 80)
-
-if (!requireNamespace("covid19vaccinationch")) {
+#if (!requireNamespace("covid19vaccinationch")) {
   message("** pkgload::load_all **")
   pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
-}
+#}
 #library(covid19vaccinationch)
 library(jsonlite)
 library(RCurl)
@@ -163,7 +162,7 @@ datacases <- datacases %>%
 The current situation of the last 4 weeks as of **`r weeks_from_to[2]`**, i.e. how the infections, hospitalizations and deaths occurred across the age classes in absolute terms is shown below. Overall during this period Switzerland has registered <span style="background-color: #dfc77f">**`r .extract_value(datacases, "Infections")`**</span> infections, <span style="background-color: #dfc77f">**`r .extract_value(datacases, "Hospitalizations")`**</span> hospitalizations and <span style="background-color: #dfc77f">**`r .extract_value(datacases, "Deaths")`**</span> deaths.
 
 
-```{r ageclasses-pandemic-month, warning=FALSE, out.width="100%", fig.asp=0.55, dpi=150, out.extra='class="img-centered img-responsive"'}
+```{r ageclasses-pandemic-month, warning=FALSE, out.width="100%", fig.asp=0.50, dpi=150, out.extra='class="img-centered img-responsive"'}
 datacasesAges = datacases %>%
     filter(!AgeClass %in% c("All"))
 
@@ -174,7 +173,7 @@ BarplotCovid(datacasesAges, g_palette = plotcol, X = "AgeClass", FACET = "Case",
 
 To account for different distribution of the population in the Age Classes consider the Cases per 100'000 inhabitants:
 
-```{r ageclasses-pandemic-month-100k, out.width="100%", fig.asp=0.55, dpi=150, out.extra='class="img-centered img-responsive"'}
+```{r ageclasses-pandemic-month-100k, out.width="100%", fig.asp=0.50, dpi=150, out.extra='class="img-centered img-responsive"'}
 datacases100k = datacases %>%  mutate(Value = Value / pop * 100000)
 
 plotcol <- c(rep(pick_vac_lev_col("not_vaccinated"), length(unique(ageclassMap$AgeClass))), "firebrick4")
@@ -215,7 +214,7 @@ datavacall <- datavacc %>% filter(AgeClass == "All") %>%
           mutate(Value = .funformat(Value * 100, TRUE), 
                  Vax = .funformat(Vax, FALSE))
 ```
-```{r ageclasses-vacc-perc-plot, warning=FALSE, out.width="100%", fig.asp=0.55, dpi=150, out.extra='class="img-centered img-responsive"'}
+```{r ageclasses-vacc-perc-plot, warning=FALSE, out.width="100%", fig.asp=0.50, dpi=150, out.extra='class="img-centered img-responsive"'}
 
 plotcol <- pick_vac_lev_col(c("partially_vaccinated", "fully_vaccinated_no_booster", "fully_vaccinated_first_booster"))
 StackedBarplotCovid(datavacc, g_palette = c(plotcol), X = "AgeClass", FILL = "Status", 
@@ -283,7 +282,7 @@ DataTab <- DataPlot %>%
   rename(value = Value)
 
 ```
-```{r ageclasses-vacc-unvac, out.width="100%", fig.asp=0.55, dpi=150, out.extra='class="img-centered img-responsive"'}
+```{r ageclasses-vacc-unvac, out.width="100%", fig.asp=0.50, dpi=150, out.extra='class="img-centered img-responsive"'}
 .calc_perc_unknwon <- function(data, case) {
   perc <- (data %>% filter(Case == case & vaccination_status == "Unknown" & AgeClass == "All") %>% .[,"Value"] / data %>% filter(Case == case & AgeClass == "All") %>% summarize(totcases = sum(Value)) %>% .[, "totcases"]) %>% as.data.frame() %>% .[, "Value"]
   paste(round(perc * 100,1), "%")
@@ -346,7 +345,7 @@ DataTabScale %>%
 
 After this reallocation let's look at the records **over 100'000 people** in each reference Age Class and vaccination status, and at the ratio between the "Unvaccinated" and "Vaccinated" cases. This view will be used also in the following sections. When accounting for the total, i.e. "All" Age Class, age adjusted figures have been computed accounting for the different distribution of the "Vaccinated" and "Unvaccinated" groups across the different Age Classes.
 
-```{r ageclasses-vacc-unvac-scale100k-plot, warning=FALSE, out.width="100%", fig.asp=0.55, dpi=150, out.extra='class="img-centered img-responsive"'}
+```{r ageclasses-vacc-unvac-scale100k-plot, warning=FALSE, out.width="100%", fig.asp=0.50, dpi=150, out.extra='class="img-centered img-responsive"'}
 
 # scale to 100k
 DataPlot100kScale <- make_100k(DataTabScale %>% rename(Value = value), 
@@ -359,7 +358,7 @@ StackedBarplotCovid(DataPlot100kScale2, X = "AgeClass", FILL = "Status", FACET =
 ```
 The ratio of the impact **per 100'000 people** of the "Fully Vaccinated" vs the "Unvaccinated" measures the vaccination effect and the risk of *Hospitalization* or *Death* of the "Unvaccinated" versus the "Vaccinated".
 
-```{r ageclasses-vacc-unvac-scale100k-graph, warning=FALSE, out.width="100%", fig.asp=0.55, dpi=150, out.extra='class="img-centered img-responsive"'}
+```{r ageclasses-vacc-unvac-scale100k-graph, warning=FALSE, out.width="100%", fig.asp=0.50, dpi=150, out.extra='class="img-centered img-responsive"'}
 DataPlot100kScaleRatios <- calc_ratio_fullyvac(DataPlot100kScale) %>%
   filter(Status %in% names(vac_levels())[grep("fully", vac_levels())])
 
@@ -405,7 +404,7 @@ Despite the decay of vaccination benefits over time and against infections (Omic
 
 The cases per 100'000 people in the 3 scenarios + Current are presented below:
 
-```{r ageclasses-cases-scenarios-100k, out.width="100%", fig.asp=0.55, dpi=150, out.extra='class="img-centered img-responsive"'}
+```{r ageclasses-cases-scenarios-100k, out.width="100%", fig.asp=0.50, dpi=150, out.extra='class="img-centered img-responsive"'}
 
 datacases100k = datacases100k %>% mutate(Status = "current")
 
@@ -428,7 +427,7 @@ StackedBarplotCovid(DataPlot100kp, X = "AgeClass", FILL = "Status", FACET = "Cas
 
 More importantly, projecting the values of the 3 scenarios on the whole population we can evaluate the vaccination impact in absolute terms.  
 
-```{r ageclasses-cases-scenarios, out.width="100%", fig.asp=0.55, dpi=150, out.extra='class="img-centered img-responsive"', position = "absolute"}
+```{r ageclasses-cases-scenarios, out.width="100%", fig.asp=0.50, dpi=150, out.extra='class="img-centered img-responsive"', position = "absolute"}
 
 DataPlotp = DataPlot100kp %>%
   select(-pop) %>%
