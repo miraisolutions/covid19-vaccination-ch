@@ -3,13 +3,14 @@ title: "Vaccination breakthroughs in Switzerland"
 output:
   html_document:
     self_contained: true
-runtime: shiny
+runtime: shiny_prerendered
 ---
 <!--more-->
 
-```{r setup, include=FALSE}
+```{r setup, context="setup", include=FALSE}
 # Default code chunk setup
 knitr::opts_chunk$set(echo = FALSE, collapse = FALSE, comment = "")
+
 # knitr::opts_chunk$set(echo = FALSE, prompt = FALSE, collapse = FALSE)
 # def.chunk.hook  <- knitr::knit_hooks$get("chunk")
 # important to fix it, as this is set dynamically by RStudio
@@ -57,7 +58,7 @@ To see how we read BAG data in **R** please refer to the [previous article](http
 
 We are interested in the weekly BAG reports about vaccination breakthroughs occurred in the last 4 weeks for different age classes. See [data documentation](https://www.covid19.admin.ch/api/data/documentation) and our source: [opendata.swiss](https://opendata.swiss/en/dataset/covid-19-schweiz).
 
-```{r library, echo=FALSE, eval = TRUE}
+```{r library, context="setup", echo=FALSE, eval = TRUE}
 # bag_api_url = covid19vaccinationch:::bag_api_url
 bag_api_url <- "https://www.covid19.admin.ch/api/data/context/"
 
@@ -90,7 +91,7 @@ The data documentation makes us aware of the following restrictions and warnings
 
 To solve the former problem (1.) we will use the average of the "Vaccinated" an "Unvaccinated" population sizes across the month.   
 
-```{r read-all-source, include = FALSE, messages = FALSE, echo = FALSE, eval = TRUE}
+```{r read-all-source, context="data", include = FALSE, messages = FALSE, echo = FALSE, eval = TRUE, cache=TRUE, cache.extra=file.info("bag.data")$mtime}
 if (FALSE) {
   DATA = read_bag_data_vac(bag_api_url, ageclassMap)
 
@@ -132,7 +133,7 @@ The age categories have been redefined again as: **`r unique(ageclassMap$AgeClas
 
 ### Last 4 weeks Cases and Vaccination
 
-```{r ageclasses-pandemic-month-calc, warning=FALSE, echo=FALSE, include=FALSE}
+```{r ageclasses-pandemic-month-calc, context="data", warning=FALSE, echo=FALSE, include=FALSE, cache=TRUE, cache.extra=file.info("datacases")$mtime}
 
 aggrvars = names(DATA.AG4W) [sapply(DATA.AG4W, is.numeric)] %>%
   grep(pattern = "_tot$", value = TRUE, invert = TRUE)  %>%
@@ -140,7 +141,7 @@ aggrvars = names(DATA.AG4W) [sapply(DATA.AG4W, is.numeric)] %>%
 
 cumvars = setdiff(names(DATA.AG4W)[sapply(DATA.AG4W, is.numeric)], aggrvars)
 
-# Aggreate to last month figures
+# Aggregate to last month figures
 DATA.AG1M <- aggregate_to_month(DATA.AG4W, period, aggv = aggrvars, cumv = cumvars)
 
 CASES.AG1M <- aggregate_to_month(CASES.AG4W, period, by = "AgeClass", 
@@ -168,6 +169,9 @@ datacases <- datacases %>%
   rename(AsOfDate = Week) %>% bind_cols() %>%
   pivot_longer(cols = c("confirmed", "deaths", "hosp"), names_to = "Case", values_to = "Value") %>%
   mutate(Case = factor(Case, levels = c("confirmed", "hosp", "deaths"), labels = c("Infections", "Hospitalizations", "Deaths")))
+```
+
+```{r .extract_value-calc, warning=FALSE, echo=FALSE, include=FALSE}
 
 .extract_value <- function(data, case, age = "All", val = "Value") {
   data %>% filter(AgeClass %in% age & Case == case) %>% as.data.frame() %>% .[, val] %>%
@@ -204,7 +208,7 @@ BarplotCovid(datacases100k, g_palette = plotcol,
 
 The current vaccination status per age group as of **`r weeks_from_to[2]`** is shown below. The "Fully Vaccinated" population is split according to the occurred injection of the **Booster** dose.
 
-```{r ageclasses-vacc-perc, warning=FALSE, out.width="100%", fig.asp=0.55, dpi=150, out.extra='class="img-centered img-responsive"'}
+```{r ageclasses-vacc-perc, context="data",warning=FALSE, cache=TRUE, cache.extra=file.info("datavacc")$mtime}
 Pop <- DATA.AG1M %>%
     filter((!AgeClass %in% c("unknown"))) %>%
     select(-Week) %>%  
@@ -229,6 +233,8 @@ datavacall <- datavacc %>% filter(AgeClass == "All") %>%
           ungroup() %>%
           mutate(Value = .funformat(Value * 100, TRUE), 
                  Vax = .funformat(Vax, FALSE))
+```
+```{r ageclasses-vacc-perc-plot, warning=FALSE, out.width="100%", fig.asp=0.55, dpi=150, out.extra='class="img-centered img-responsive"'}
 
 plotcol <- pick_vac_lev_col(c("partially_vaccinated", "fully_vaccinated_no_booster", "fully_vaccinated_first_booster"))
 StackedBarplotCovid(datavacc, g_palette = c(plotcol), X = "AgeClass", FILL = "Status", 
@@ -330,7 +336,7 @@ DataTab %>%
 
 There is no hint of whether the **"Unknown" entries** tend to be more or less vaccinated (checking their curves in the BAG site they seem to be somewhere in between), therefore it can make sense to **reassign proportionally** these cases to the others vaccination categories. 
 
-```{r ageclasses-vacc-unvac-tab4-calc, warning=FALSE, echo=FALSE, include=FALSE, warning=FALSE}
+```{r ageclasses-vacc-unvac-tab4-calc, echo=FALSE, include=FALSE, warning=FALSE}
 #Allocate Unknown to the other cats
 DataTabScale <- rescale_unknown(DataTab)
 ```
@@ -481,7 +487,7 @@ If there had been no vaccination at all, in the last 4 weeks there would have be
 This section reports how the cases developed over time within the 3 populations. Please note, differentiating according to the actual date of vaccination (e.g. if earlier than or within 6 months) is not possible.    
 Figures per 100'000 people are shown again, reallocating those in the "Unknown" category in each analyzed week.
 
-```{r ageclasses-timeline-calc, include = FALSE, echo = FALSE}
+```{r ageclasses-timeline-calc, context = "data", include = FALSE, echo = FALSE, cache=TRUE, cache.extra=file.info("DataRoll4W100k")$mtime}
 ageclasses2 <- sort(unique(ageclassMap$AgeClass2))
 
 DataRoll4W100k <- readRDS(file.path(data_path(), "DataRoll4W100k.rds")) %>%
@@ -528,7 +534,7 @@ DataRoll4W100kVac <- DataRoll4W100k %>% filter(Status %in% grep("Fully", names(v
 ```{r ageclasses-pandemic-hosp-deaths-timeline_100k-graph, warning=FALSE, out.width="100%", fig.asp=0.85, dpi=150, out.extra='class="img-responsive"'}
 
 status1 <- names(vac_levels())[grep("fully_vaccinated|not_vaccinated", vac_levels())]
-data1 <- DataRoll4W100k %>% filter(AsOfDate %in% last_timeline_weeks)
+#data1 <- DataRoll4W100k %>% filter(AsOfDate %in% last_timeline_weeks)
 
 #UI
 fluidRow(
@@ -543,8 +549,15 @@ fluidRow(
                      selectize = TRUE)
   )
 )
+```
+```{r plotlyoutput1}
+plotlyOutput("lineplot1")
+```
+```{r ageclasses-pandemic-hosp-deaths-timeline_100k-server, context="server", warning=FALSE, out.width="100%", fig.asp=0.85, dpi=150, out.extra='class="img-responsive"'}
 #SERVER
-renderPlotly({
+data1 <- DataRoll4W100k %>% filter(AsOfDate %in% last_timeline_weeks)
+
+output$lineplot1 <- renderPlotly({
       if (is.null(input$case1))
         return(plot.new())
       
@@ -557,7 +570,7 @@ renderPlotly({
 
 The ratio between the incidence of "Unvaccinated" vs "Fully Vaccinated" over time gives us a measure of how higher is the risk for the "Unvaccinated" is.
 
-```{r ageclasses-pandemic-hosp-deaths-timeline_ratio, warning=FALSE}
+```{r ageclasses-pandemic-hosp-deaths-timeline_ratio, context = "data", warning=FALSE}
 
 DataRoll4W100kVac = DataRoll4W100k %>% filter(Status %in% grep("Fully", names(vac_levels()), value = TRUE)) %>%
   select(- pop) %>% rename(ValueVac = Value) #%>% pivot_wider(names_from  = Status, values_from = ValueVac)
@@ -575,7 +588,7 @@ DataRoll4W100kratio <- left_join(DataRoll4W100kVac, DataRoll4W100kUnVac, by = c(
 ```{r ageclasses-pandemic-hosp-deaths-timeline_ratio-graph, warning=FALSE, out.width="100%", fig.asp=0.85, dpi=150, out.extra='class="img-responsive"'}
 
 status2 <- names(vac_levels())[grep("fully", vac_levels())]
-data2 <- DataRoll4W100kratio %>% filter(AsOfDate %in% last_timeline_weeks)
+#data2 <- DataRoll4W100kratio %>% filter(AsOfDate %in% last_timeline_weeks)
 
 #UI
 fluidRow(
@@ -590,8 +603,15 @@ fluidRow(
                      selectize = TRUE)
   )
 )
+```
+```{r plotlyoutput2}
+plotlyOutput("lineplot2")
+```
+```{r ageclasses-pandemic-hosp-deaths-timeline_ratio-server, context = "server", warning=FALSE, out.width="100%", fig.asp=0.85, dpi=150, out.extra='class="img-responsive"'}
 #SERVER
-renderPlotly({
+data2 <- DataRoll4W100kratio %>% filter(AsOfDate %in% last_timeline_weeks)
+
+output$lineplot2 <- renderPlotly({
       if (is.null(input$case2))
         return(plot.new())
   
