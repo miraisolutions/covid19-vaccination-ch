@@ -5,9 +5,10 @@
 # time is in UTC, BAG data are updated at 13:25, i.e. 12:25 UTC 
 on:
   schedule:
-    - cron: "*/15 * * * *"
-    # - cron: "0 13 * * *"
+    #- cron: "*/15 * * * *"
+    - cron: "0 13 * * *"
 
+# for test in branch
 # on:
 #   push:
 #     paths-ignore:
