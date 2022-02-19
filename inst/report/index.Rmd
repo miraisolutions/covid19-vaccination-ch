@@ -7,7 +7,7 @@ runtime: shiny_prerendered
 ---
 <!--more-->
 
-```{r setup-load, include=FALSE, context="setup"}
+```{r setup, include=FALSE, context="setup"}
 # Default code chunk setup
 knitr::opts_chunk$set(echo = FALSE, collapse = FALSE, comment = "")
 
@@ -632,5 +632,5 @@ Similar results about the benefits of vaccination are available from other count
 If you have any question about the approach, or any suggestion for improvement please do not hesitate to get in [touch](https://mirai-solutions.ch/about/contact/), we would love to hear from you as we may publish further updates to this article.
 
 This page article also at showing how an **R Markdown** file can be deployed to **shinyapps.io** to be a live page.
-For details on the architecture of the **covid19vaccinationch** R package that supports this deployment and its installation see the [ReadMe](https://github.com/miraisolutions/covid19-vaccination-ch/blob/main/README.md) on our *GitHub** repository.
+For details on the architecture of the **covid19vaccinationch** R package that supports this deployment and its installation see the [ReadMe](https://github.com/miraisolutions/covid19-vaccination-ch/blob/main/README.md) on our **GitHub** repository.
 
