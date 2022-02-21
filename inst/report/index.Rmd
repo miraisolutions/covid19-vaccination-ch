@@ -7,7 +7,7 @@ runtime: shiny_prerendered
 ---
 <!--more-->
 
-```{r setup, include=FALSE, context="setup"}
+```{r startup, include=FALSE, context="setup"}
 # Default code chunk setup
 knitr::opts_chunk$set(echo = FALSE, collapse = FALSE, comment = "")
 
@@ -15,11 +15,11 @@ knitr::opts_chunk$set(echo = FALSE, collapse = FALSE, comment = "")
 # def.chunk.hook  <- knitr::knit_hooks$get("chunk")
 # important to fix it, as this is set dynamically by RStudio
 options(width = 80)
-#if (!requireNamespace("covid19vaccinationch")) {
+# if (!requireNamespace("covid19vaccinationch")) {
   message("** pkgload::load_all **")
   pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
-#}
-#library(covid19vaccinationch)
+# }
+library(covid19vaccinationch)
 library(jsonlite)
 library(RCurl)
 library(dplyr)
@@ -255,11 +255,8 @@ It is worth mentioning other possible sources of bias that can't be isolated, so
 
 * Leading to underestimation of vaccination effect:  
   + People with chronic diseases are over-represented in the "Vaccinated" population (visible from BAG website).
-  + Those working in "riskier" roles are over-represented in the "Vaccinated" population, e.g. doctors.
-  + Since 3G-2G rule (green pass) the "Unvaccinated" are less present in risky locations  
-  + Hospitalized "with" Covid, i.e. recorded positive upon hospitalization, are counted as Covid patients, despite they are not in hospitali becaise of Covid.   
-* Leading to overestimation of vaccines effect:   
-  + A portion of "Unvaccinated" is being very incautious and exposes itself to higher risk, e.g. participating in demonstrations, denying Covid, taking no protections, rejecting cures etc.   
+  + During 3G-2G rule (green pass) the "Unvaccinated" have been less present in risky locations  
+  + Hospitalized "with" Covid, i.e. recorded positive upon hospitalization, are counted as Covid patients, despite they are not in hospital because of Covid.   
 
 We are happy to hear more from the readers about this topic and possibly collect sources that could give a better insight. We can neglect of course possible causes of bias for *Infections* (e.g. lower test tendency of the "Vaccinated") that would not lead to a possible hospitalization, as *Infections* are not treated in this article.
 
@@ -535,12 +532,12 @@ fluidRow(
                      selectize = TRUE)
   )
 )
-```
-```{r plotlyoutput1}
+
 plotlyOutput("lineplot1")
 ```
 ```{r ageclasses-pandemic-hosp-deaths-timeline_100k-server, context="server", warning=FALSE, out.width="100%", fig.asp=0.85, dpi=150, out.extra='class="img-responsive"'}
 #SERVER
+
 data1 <- DataRoll4W100k %>% filter(AsOfDate %in% last_timeline_weeks)
 
 output$lineplot1 <- renderPlotly({
@@ -589,12 +586,12 @@ fluidRow(
                      selectize = TRUE)
   )
 )
-```
-```{r plotlyoutput2}
+
 plotlyOutput("lineplot2")
 ```
 ```{r ageclasses-pandemic-hosp-deaths-timeline_ratio-server, context = "server", warning=FALSE, out.width="100%", fig.asp=0.85, dpi=150, out.extra='class="img-responsive"'}
 #SERVER
+
 data2 <- DataRoll4W100kratio %>% filter(AsOfDate %in% last_timeline_weeks)
 
 output$lineplot2 <- renderPlotly({

@@ -4,23 +4,22 @@
 # covid19vaccinationch
 
 The goal of `covid19vaccinationch` is to provide a dashboard article
-analyzing the weekly Vaccination report from
-[**BAG**](https://www.bag.admin.ch/bag/en/home.html) (BundesAmt für
-Gesundheit - Swiss Federal Office for Public Health) collecting the data
-from the past 4 weeks..
+analyzing the weekly Vaccination report from [**BAG**](https://www.bag.admin.ch/bag/en/home.html) (BundesAmt für Gesundheit - Swiss Federal Office for Public Health) collecting the data from the past 4 weeks..
 
-“Vaccinated” are split into 3 categories:  
-- *Fully Vaccinated with Booster*  
-- *Fully Vaccinated without Booster*  
-- *Partially Vaccinated*.
+“Vaccinated” are split into 3 categories:   
+
+* *Fully Vaccinated with Booster*  
+* *Fully Vaccinated without Booster*  
+* *Partially Vaccinated*.
 
 The categories above are compared with the “Unvaccinated”.
 
 Hospitalized and Deaths rates withing the 4 populations are compared to
 derive who is more at risk. The following measures are shown in the
 article:  
-- Hospitalized / Deaths counts  
-- Hospitalized / Deaths per 100'000 people
+
+* Hospitalized / Deaths counts  
+* Hospitalized / Deaths per 100'000 people
 
 Entries with “Unknown” vaccination status are allocated to the 4
 populations proportionally. Infection cases cannot be used for
@@ -52,6 +51,12 @@ covid19vaccinationch::run_report()
 
 The article is being deployed to **Shinyapps.io** as an **Rmarkdown** Rmd document.
 
-`index.Rmd` file contains the article text and the R code that reads and processes the data. Instead of deploying to Shinyapps.io the `app.R` file, it is possible to deploy an index.Rmd file that will generate `Index.html` once rendered. The Rmd article is written with `runtime: shiny` and contains both `ggplot2` / `plotly` graphs and `shiny` dynamic charts.
+`index.Rmd` file contains the article text and the R code that reads and processes the data. Instead of deploying to `Shinyapps.io` the `app.R` file, it is possible to deploy an index.Rmd file that will generate `Index.html` once rendered. The Rmd article is written with `runtime: shiny_prerendered` and contains both `ggplot2` / `plotly` graphs and `shiny` dynamic charts.
+
+## Data building with GitHubActions
+
+The data are stored as RDS files inside the package in folder `inst/bag_data` and read from this folder in the `index.Rmd` file.    
+A function of the package `build_data()` rebuilds the `RDS` files with the latest `BAG` data and writes them again in storage folder `inst/bag_data`. This function is executed buy the GitHub Action `BUILD-DATA` (stored in file `build-data.yml`) every day at 2pm (CEST) and the newly constructed data are committed and pushed in the storage folder of the `main` branch so that every day the application can be visualized with the daily updates.
+
 
 
