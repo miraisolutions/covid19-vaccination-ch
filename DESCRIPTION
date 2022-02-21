@@ -10,18 +10,14 @@ License: GPL (>= 3)
 Depends:
     R (>= 4.0.0)
 Imports: 
-    attempt,
     dplyr,
     DT,
     ggplot2,
-    glue,
     htmlTable,
-    htmltools,
     jsonlite,
     lubridate,
     pkgload,
     plotly,
-    RCurl,
     rmarkdown,
     scales,
     shiny (>= 1.7.1),
