@@ -9,7 +9,7 @@ rsconnect::setAccountInfo(
 file.copy("inst/report/index.Rmd", "index.Rmd", overwrite = TRUE)
 #
 rsconnect::deployApp(
-  account = "miraisolutions",
+  # account = "miraisolutions",
   # appDir = "inst/report",
   # appPrimaryDoc = "inst/report/index.Rmd",
   appName = "covid19-vaccination-ch",
