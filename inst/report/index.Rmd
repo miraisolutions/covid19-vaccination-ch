@@ -15,11 +15,11 @@ knitr::opts_chunk$set(echo = FALSE, collapse = FALSE, comment = "")
 # def.chunk.hook  <- knitr::knit_hooks$get("chunk")
 # important to fix it, as this is set dynamically by RStudio
 options(width = 80)
-# if (!requireNamespace("covid19vaccinationch")) {
+if (!requireNamespace("covid19vaccinationch")) {
   message("** pkgload::load_all **")
   pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
-# }
-library(covid19vaccinationch)
+}
+# library(covid19vaccinationch)
 library(jsonlite)
 library(RCurl)
 library(dplyr)
@@ -46,11 +46,12 @@ table_cell_css <- "white-space: nowrap; font-size: .95em;" # relative to the tab
 ```
 
 <!-- \definecolor{hightlightColor}{HTML}{FFFF66} -->
+TEST RUN
 
-Since May 2020 <span style="background-color: #dfc77f">**Mirai Solutions**</span> is showing a dashboard on our [gallery](https://mirai-solutions.ch/gallery/) that contains a global view of the [COVID-19 Pandemic](https://mirai-solutions.ch/gallery/covid19/) with a further split by continent and country. We use publicly available data from the [COVID-19 Data Hub](https://covid19datahub.io/), a great open source project providing a unified data set put together from numerous official local sources from all over the world.
+Since May 2020 <span style="background-color: #dfc77f">**Mirai Solutions**</span> is showing a dashboard on our [gallery](https://mirai-solutions.ch/gallery/){target="_blank"} that contains a global view of the [COVID-19 Pandemic](https://mirai-solutions.ch/gallery/covid19/){target="_blank"} with a further split by continent and country. We use publicly available data from the [COVID-19 Data Hub](https://covid19datahub.io/){target="_blank"}, a great open source project providing a unified data set put together from numerous official local sources from all over the world.
 
-In October and December 2021 we published 2 articles ["A closer look at Vaccination breakthroughs in Switzerland"](https://mirai-solutions.ch/news/2021/10/20/covid19-vaccination-breakthroughs-switzerland/) and ["A 2nd look at Vaccination breakthroughs in Switzerland"](https://mirai-solutions.ch/news/2021/12/06/covid19-vaccination-breakthroughs-ch-v2/), where we showed how to read data from the [Swiss Federal Office for Public Health (BAG)](https://www.bag.admin.ch/bag/en/home.html) in R, and illustrated the difference in *Hospitalizations* and *Deaths* between **Vaccinated** and **Unvaccinated** during the weeks in October and December.   
-Here we provide a live update to these articles deployed to [shinyapps.io](https://www.shinyapps.io/) that will always show the latest data from BAG.     
+In October and December 2021 we published 2 articles ["A closer look at Vaccination breakthroughs in Switzerland"](https://mirai-solutions.ch/news/2021/10/20/covid19-vaccination-breakthroughs-switzerland/){target="_blank"} and ["A 2nd look at Vaccination breakthroughs in Switzerland"](https://mirai-solutions.ch/news/2021/12/06/covid19-vaccination-breakthroughs-ch-v2/){target="_blank"}, where we showed how to read data from the [Swiss Federal Office for Public Health (BAG)](https://www.bag.admin.ch/bag/en/home.html){target="_blank"} in R, and illustrated the difference in *Hospitalizations* and *Deaths* between **Vaccinated** and **Unvaccinated** during the weeks in October and December.   
+Here we provide a live update to these articles deployed to [shinyapps.io](https://www.shinyapps.io/){target="_blank"} that will always show the latest data from BAG.     
 
 ### Reading BAG data
 

@@ -23,19 +23,19 @@ ageclassMap <- data.frame(
 #' @import dplyr
 read_bag_data_vac <- function(bag.admin.url, ageclassMap) {
   # define variables:
-  BAGSOURCES <- jsonlite::fromJSON(bag.admin.url)
+  BAGSOURCES <- fromJSON(bag.admin.url)
   sourceDate <- BAGSOURCES$sourceDate
   
   # confirmed Vaccinated are not updated anymore
   
   #TODO: exclusion of 2020 done by hand
   Hosp_vaccpersons <- BAGSOURCES$sources$individual$json$weekly$byAge$hospVaccPersons
-  HOSP.VAC.J <- jsonlite::fromJSON(Hosp_vaccpersons) %>%
+  HOSP.VAC.J <- fromJSON(Hosp_vaccpersons) %>%
     filter(!grepl("2020",date)) %>%
     mutate(Week = .makeweek(date))
   
   Death_vaccpersons <- BAGSOURCES$sources$individual$json$weekly$byAge$deathVaccPersons
-  DEATH.VAC.J <- jsonlite::fromJSON(Death_vaccpersons) %>%
+  DEATH.VAC.J <- fromJSON(Death_vaccpersons) %>%
     filter(!grepl("2020",date)) %>%
     mutate(Week = .makeweek(date))
   
@@ -94,11 +94,11 @@ read_bag_data_vac <- function(bag.admin.url, ageclassMap) {
 #' @import dplyr
 read_bag_data_cases <- function(bag.admin.url, ageclassMap, dateweek = NULL) {
   # define variables:
-  BAGSOURCES <- jsonlite::fromJSON(bag.admin.url)
+  BAGSOURCES <- fromJSON(bag.admin.url)
   sourceDate <- BAGSOURCES$sourceDate
   
   Cases = BAGSOURCES$sources$individual$json$weekly$byAge$cases
-  CASES.J <- jsonlite::fromJSON(Cases) %>%
+  CASES.J <- fromJSON(Cases) %>%
     filter(!grepl("2020",datum)) %>%
     mutate(Week = .makeweek(datum))
   
