@@ -12,5 +12,5 @@ weeks_to_date(w, range = TRUE)
 \item{range}{logical if TRUE then only 1st and last values are returned}
 }
 \description{
-Utility that converts weeks in form \verb{YY-W-[0-9]} into real dates in form \code{yy/mm/dd}
+Utility that converts weeks in form \verb{YY-W-[0-9]} into  real dates in form \code{yy/mm/dd}
 }
