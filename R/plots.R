@@ -677,11 +677,12 @@ LinePlotCovid <- function(df, FACET = "AgeClass", g_palette, percent = FALSE,
 #' Color table cells
 #'
 #' @param data data.frame data
-#' @param header character, variable name for header
-#' @param cgroup character, variable name for cgroup if present, NULL
+#' @param header character, variable name for `header`
+#' @param cgroup character, variable name for `cgroup` if present, NULL
 #' @param rnames character, variable name for rows
 #' @param rgbn numeric RGBN value
-#' @param rnames character, variable level to skip
+#' @param rnames character, `rnames` argument of `tidyHtmlTable`
+#' @param skip character, variable level to skip
 #' @param table_cell_css character feature of css cells
 #'
 #' @import dplyr

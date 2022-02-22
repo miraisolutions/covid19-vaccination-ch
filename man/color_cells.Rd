@@ -17,13 +17,15 @@ color_cells(
 \arguments{
 \item{data}{data.frame data}
 
-\item{header}{character, variable name for header}
+\item{header}{character, variable name for \code{header}}
 
-\item{cgroup}{character, variable name for cgroup if present, NULL}
+\item{cgroup}{character, variable name for \code{cgroup} if present, NULL}
 
-\item{rnames}{character, variable level to skip}
+\item{rnames}{character, \code{rnames} argument of \code{tidyHtmlTable}}
 
 \item{rgbn}{numeric RGBN value}
+
+\item{skip}{character, variable level to skip}
 
 \item{table_cell_css}{character feature of css cells}
 }
