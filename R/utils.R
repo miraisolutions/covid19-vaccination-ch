@@ -5,7 +5,7 @@ table_cell_css <- "white-space: nowrap; font-size: .95em;" # relative to the tab
 
 #' Vaccination status vector with labels as names
 #'
-#' @noRd
+#' @rdname vac_levels
 #' @export
 vac_levels <- function(){
   levs <- c("unknown", #"fully_vaccinated",
@@ -32,7 +32,7 @@ col_current_status <- function() {
 
 #' Vaccination status color named vector
 #'
-#' @noRd
+#' @rdname vac_levels
 #' @export
 vac_levels_colors <- function(){
   VaxNoBoCol = "#17a2ff"
@@ -48,7 +48,7 @@ vac_levels_colors <- function(){
 #' Pick Label given Vaccination status
 #'
 #' @param x character vaccination status from `vac_levels()`
-#' @noRd
+#' @rdname vac_levels
 #' @export
 pick_vac_lev <- function(x) {
   if (!all(x %in% vac_levels()))
@@ -60,7 +60,7 @@ pick_vac_lev <- function(x) {
 #' Pick color given vaccination status
 #'
 #' @param x character vaccination status from `vac_levels()`
-#' @noRd
+#' @rdname vac_levels
 #' @export
 pick_vac_lev_col <- function(x) {
   if (!all(x %in% vac_levels()))
@@ -83,7 +83,6 @@ pick_vac_lev_col <- function(x) {
 #' @param w date vector
 #' @param range logical if TRUE then only 1st and last values are returned
 #'
-#' @noRd
 #' @export
 weeks_to_date <- function(w, range = TRUE){
   weeksN = sapply(strsplit(w, "-"), function(x) as.numeric(x[3]))

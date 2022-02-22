@@ -6,7 +6,6 @@ report_path <- function() {
 }
 #' Data path
 #'
-#' @noRd
 #' @export
 data_path <- function() {
   system.file("bag_data", package = "covid19vaccinationch")
