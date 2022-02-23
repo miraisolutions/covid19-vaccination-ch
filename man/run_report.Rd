@@ -4,10 +4,12 @@
 \alias{run_report}
 \title{Run the Rmd report}
 \usage{
-run_report(...)
+run_report(rds = TRUE, ...)
 }
 \arguments{
-\item{...}{Additional arguments to \code{\link[rmarkdown:run]{rmarkdown::run()}}.}
+\item{rds}{logical, if FALSE the data are read from source, if TRUE from RDS files in \code{bag_data} folder. Default = TRUE, FALSE to be used in local run.}
+
+\item{...}{Additional arguments to \code{\link[rmarkdown:run]{rmarkdown::run()}}, different from \code{render_args}.}
 }
 \description{
 Run the Rmd report

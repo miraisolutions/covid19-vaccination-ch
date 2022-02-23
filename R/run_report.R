@@ -13,8 +13,9 @@ data_path <- function() {
 
 #' Run the Rmd report
 #'
-#' @param ... Additional arguments to [rmarkdown::run()].
+#' @param rds logical, if FALSE the data are read from source, if TRUE from RDS files in `bag_data` folder. Default = TRUE, FALSE to be used in local run.
+#' @param ... Additional arguments to [rmarkdown::run()], different from `render_args`.
 #' @export
-run_report <- function(...) {
-  rmarkdown::run(file.path(report_path(), "index.Rmd"), ...)
+run_report <- function(rds = TRUE, ...) {
+  rmarkdown::run(file.path(report_path(), "index.Rmd"), render_args = list(params = list(rds = rds)), ...)
 }

@@ -3,6 +3,8 @@ title: "Vaccination breakthroughs in Switzerland"
 output:
   html_document:
     self_contained: true
+params:
+  rds: TRUE
 runtime: shiny_prerendered
 ---
 <!--more-->
@@ -67,7 +69,8 @@ The data documentation makes us aware of the following restrictions and warnings
 To solve the former problem (1.) we will use the average of the "Vaccinated" an "Unvaccinated" population sizes across the month.   
 
 ```{r read-all-source, context="data", messages = FALSE, echo = FALSE, eval = TRUE, cache=TRUE}
-if (FALSE) {
+if (!params$rds) {
+  message("** reading Vac data from Source **")
   DATA = read_bag_data_vac(bag_api_url, ageclassMap)
   # read from RDS
 } else
@@ -84,7 +87,8 @@ period = paste(range(weeks4), collapse = "-")
 DATA.AG4W <- DATA.AGG %>% filter(Week %in% weeks4)
 
 # read Cases, from RDS
-if (FALSE) {
+if (!params$rds) {
+  message("** reading Infection data from Source **")
   CASES = read_bag_data_cases(bag_api_url, ageclassMap, dateweek = unique(DATA$Week))
 } else 
   CASES <- readRDS(file.path(data_path(), "CASES.rds"))
