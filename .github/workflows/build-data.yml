@@ -5,8 +5,8 @@
 # time is in UTC, BAG data are updated at 13:25, i.e. 12:25 UTC
 on:
   schedule:
-    #- cron: "*/15 * * * *"
-    - cron: "0 13 * * *"
+    #every day at 13pm UCT excluding Saturday and Sunday
+    - cron: "0 13 * * 1-5"
 
 # for test in branch
 # on:
