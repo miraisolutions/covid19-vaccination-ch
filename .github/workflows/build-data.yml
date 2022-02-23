@@ -2,7 +2,7 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 
 # Triggered on push and pull request events
-# time is in UTC, BAG data are updated at 13:25, i.e. 12:25 UTC 
+# time is in UTC, BAG data are updated at 13:25, i.e. 12:25 UTC
 on:
   schedule:
     #- cron: "*/15 * * * *"
@@ -13,7 +13,7 @@ on:
 #   push:
 #     paths-ignore:
 #       - 'inst/bag_data/**'
-    
+
 # Name of the workflow => usethis::use_github_actions_badge("CI-CD-renv")
 
 name: BUILD-DATA
@@ -67,7 +67,7 @@ jobs:
           pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
           build_data()
         shell: Rscript {0}
-        
+
       - name: Commit and push changes
         run: |
           git config --local user.name "$GITHUB_ACTOR"
@@ -76,3 +76,21 @@ jobs:
           git commit -m "GitHubActions: Update BAG data" || echo "GitHubActions: No changes to commit"
           git pull --ff-only
           git push origin
+
+      - name: Install R CMD check
+        # check if data are ok, test must pass
+        run: install.packages("rcmdcheck")
+        shell: Rscript {0}
+
+      - name: Check package
+        uses: r-lib/actions/check-r-package@v2
+
+      - name: Deploy to shinyapps.io
+        # Deploy to shinyapps.io
+        # Continuous deployment only for pushes to the main / master branch
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        env:
+          SHINYAPPS_ACCOUNT: ${{ secrets.SHINYAPPS_ACCOUNT }}
+          SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
+          SHINYAPPS_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
+        run: Rscript deploy/deploy-shinyapps.R

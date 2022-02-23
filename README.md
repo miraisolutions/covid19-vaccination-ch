@@ -53,7 +53,7 @@ The article is being deployed to **Shinyapps.io** as an **Rmarkdown** Rmd docume
 
 `index.Rmd` file contains the article text and the R code that reads and processes the data. Instead of deploying to `Shinyapps.io` the `app.R` file, it is possible to deploy an index.Rmd file that will generate `Index.html` once rendered. The Rmd article is written with `runtime: shiny_prerendered` and contains both `ggplot2` / `plotly` graphs and `shiny` dynamic charts.
 
-## Data building with GitHubActions
+## Data building with GitHub Actions
 
 The data are stored as RDS files inside the package in folder `inst/bag_data` and read from this folder in the `index.Rmd` file.    
 A function of the package `build_data()` rebuilds the `RDS` files with the latest `BAG` data and writes them again in storage folder `inst/bag_data`. This function is executed buy the GitHub Action `BUILD-DATA` (stored in file `build-data.yml`) every day at 2pm (CEST) and the newly constructed data are committed and pushed in the storage folder of the `main` branch so that every day the application can be visualized with the daily updates.
