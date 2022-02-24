@@ -46,7 +46,7 @@ table_cell_css <- "white-space: nowrap; font-size: .95em;" # relative to the tab
 Since May 2020 <span style="background-color: #dfc77f">**Mirai Solutions**</span> is showing a dashboard on our [gallery](https://mirai-solutions.ch/gallery/){target="_blank"} that contains a global view of the [COVID-19 Pandemic](https://mirai-solutions.ch/gallery/covid19/){target="_blank"} with a further split by continent and country. We use publicly available data from the [COVID-19 Data Hub](https://covid19datahub.io/){target="_blank"}, a great open source project providing a unified data set put together from numerous official local sources from all over the world.
 
 In October and December 2021 we published 2 articles ["A closer look at Vaccination breakthroughs in Switzerland"](https://mirai-solutions.ch/news/2021/10/20/covid19-vaccination-breakthroughs-switzerland/){target="_blank"} and ["A 2nd look at Vaccination breakthroughs in Switzerland"](https://mirai-solutions.ch/news/2021/12/06/covid19-vaccination-breakthroughs-ch-v2/){target="_blank"}, where we showed how to read data from the [Swiss Federal Office for Public Health (BAG)](https://www.bag.admin.ch/bag/en/home.html){target="_blank"} in R, and illustrated the difference in *Hospitalizations* and *Deaths* between **Vaccinated** and **Unvaccinated** during the weeks in October and December.   
-Here we provide a live update to these articles deployed to [shinyapps.io](https://www.shinyapps.io/){target="_blank"} that will always show the latest data from BAG.     
+Here we provide a live update to these articles deployed to [ShinyApps.io](https://www.shinyapps.io/){target="_blank"} that will always show the latest data from BAG.     
 
 ### Reading BAG data
 
@@ -606,7 +606,7 @@ output$lineplot2 <- renderPlotly({
 
 ### Conclusions
 
-The reader must be aware that the utilized data are updated by BAG every day also for the past weeks, therefore the numbers seen today may be different tomorrow. Especially the line plots may show a downtrend in the last 1 or 2 weeks due to incompleteness of the latest data.  
+The reader must be aware that the utilized data are updated by BAG every day also for the past weeks, therefore the numbers shown today may be different tomorrow. Especially the 1st line plot may show a downtrend in the last 1 or 2 weeks due to incompleteness of the latest data.  
 
 The "Unvaccinated" and "Vaccinated" populations compared in this page have some discrepancies that unfortunately cannot be handled because BAG data sources lack some views that could have been quite interesting to check:   
 
@@ -626,6 +626,6 @@ Similar results about the benefits of vaccination are available from other count
 
 If you have any question about the approach, or any suggestion for improvement please do not hesitate to get in [touch](https://mirai-solutions.ch/about/contact/){target="_blank"}, we would love to hear from you as we may publish further updates to this article.
 
-This page article also at showing how an **R Markdown** file can be deployed to **shinyapps.io** to be a live page.
+This page article aims also at showing how an **R Markdown** file can be deployed to **ShinyApps.io** to be a live page.
 For details on the architecture of the **covid19vaccinationch** R package that supports this deployment and its installation see the [ReadMe](https://github.com/miraisolutions/covid19-vaccination-ch/blob/main/README.md){target="_blank"} on our **GitHub** repository.
 
