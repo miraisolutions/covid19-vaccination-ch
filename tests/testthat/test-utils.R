@@ -35,7 +35,7 @@ test_that("aggregate_to_month works", {
 
   data <- data %>% filter(Week %in% weeks4)
 
-  # Aggreate to last month figures
+  # Aggregate to last month figures
   data.AG1M <- aggregate_to_month(data, period, by = "AgeClass",
                                    aggv = "confirmed", cumv = c("pop", "confirmed_tot"))
 
@@ -43,7 +43,5 @@ test_that("aggregate_to_month works", {
   expect_true(sum(is.na(data.AG1M[, sapply(data.AG1M, is.numeric)])) == 0, label = "aggregate_to_month returns NAs")
   expect_equal(names(data.AG1M), c("AgeClass","confirmed","pop","confirmed_tot","Week"),
                label = "Column names of the result of aggregate_to_month are incorrect")
-  expect_true(sum(data.AG1M$confirmed) == 1428064, label = "aggregate_to_month sum of confirmed must be 1428064")
-
 })
 

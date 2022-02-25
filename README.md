@@ -49,6 +49,6 @@ The `covid19-vaccination-ch` R Markdown article is deployed to **shinyapps.io** 
 
 ## Data building with GitHub Actions
 
-It is likely that upon data structure changes from *BAG* the article might fail to render. For this reason, data are programmatically updated and checked as part of the **Continuous Integration / Deployment GithUb Actions workflow** `.github/workflows/workflow.yml`. The report will therefore show the latest working data until the package is update to be compatible with the new data structure.
+It is likely that upon data structure changes from *BAG* the article might fail to render. For this reason, data are programmatically updated and checked as part of the **Continuous Integration / Deployment GitHub Actions workflow** `.github/workflows/workflow.yml`. The report will therefore show the latest working data until the package is update to be compatible with the new data structure.
 
 Data are stored as RDS files inside the package under `inst/bag_data`, and used when rendering the article. A function of the package `build_data()` rebuilds the RDS files with the latest *BAG* data and overwrites them in `inst/bag_data`. This function is executed by the GitHub Action step _"Fetch and rebuild latest BAG data"_ every day at 13:00 UTC, and the updated data are tested (relying on `R CMD check`) and then committed and pushed to the `main` branch. Finally, the article with updated data is deployed to *shinyapps.io*, ensuring the application can be visualized with the daily updates.
