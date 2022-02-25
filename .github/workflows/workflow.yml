@@ -2,10 +2,15 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 
 # Triggered on push and pull request events
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  # schedule:
+  #   #every day at 13pm UCT excluding Saturday and Sunday
+  #   - cron: "0 13 * * 1-5"
 
 # Name of the workflow => usethis::use_github_actions_badge("CI-CD-renv")
-name: CI-CD-renv
+name: CI-CD-BUILD-DATA
 
 jobs:
   CI-CD:
@@ -51,6 +56,13 @@ jobs:
       - name: Activate renv and restore packages with cache
         uses: r-lib/actions/setup-renv@v2
 
+      - name: Run R build data script
+        #if: github.event_name == 'schedule'
+        run: |
+          pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
+          build_data()
+        shell: Rscript {0}
+
       - name: Install R CMD check
         run: install.packages("rcmdcheck")
         shell: Rscript {0}
@@ -58,9 +70,19 @@ jobs:
       - name: Check package
         uses: r-lib/actions/check-r-package@v2
 
+      - name: Commit and push changes
+        #if: github.event_name == 'schedule'
+        run: |
+          git config --local user.name "$GITHUB_ACTOR"
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add inst/bag_data/\*
+          git commit -m "GitHub Action: Update BAG data" || echo "GitHub Action: No changes to commit"
+          git pull --ff-only
+          git push origin
+
       - name: Deploy to shinyapps.io
         # Continuous deployment only for pushes to the main / master branch
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        #if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         env:
           SHINYAPPS_ACCOUNT: ${{ secrets.SHINYAPPS_ACCOUNT }}
           SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}

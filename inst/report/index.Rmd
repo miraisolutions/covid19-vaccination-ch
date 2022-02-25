@@ -4,10 +4,15 @@ output:
   html_document:
     self_contained: true
 params:
-  rds: TRUE
+  fetch_latest_data: FALSE
+  use_pkgload: TRUE 
 runtime: shiny_prerendered
 ---
-<!--more-->
+
+```{r params, include=FALSE, context="data", cache=TRUE}
+# store params also for server
+ knit_params <- params
+```
 
 ```{r startup, include=FALSE, context="setup"}
 # Default code chunk setup
@@ -16,12 +21,18 @@ knitr::opts_chunk$set(echo = FALSE, collapse = FALSE, comment = "")
 # knitr::opts_chunk$set(echo = FALSE, prompt = FALSE, collapse = FALSE)
 # def.chunk.hook  <- knitr::knit_hooks$get("chunk")
 # important to fix it, as this is set dynamically by RStudio
-# options(width = 80)
-if (!requireNamespace("covid19vaccinationch")) {
-  message("** pkgload::load_all **")
-  pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
+options(width = 80)
+
+load_pkg_c19 <- function(usepkgload) {
+  if (usepkgload) {
+    pkgload::load_all(export_all = FALSE, helpers = FALSE, attach_testthat = FALSE)
+  }
+  if (!("covid19vaccinationch" %in% search())) {
+    library(covid19vaccinationch)
+  }
+  NULL
 }
-#library(covid19vaccinationch)
+
 library(jsonlite)
 library(dplyr)
 library(tidyr)
@@ -38,10 +49,17 @@ library(shiny)
 # # 
 table_css <- "border-collapse: separate; border-spacing: 0.25em; width: 100%; font-size: 0.7em; margin-bottom: 14.5px;"
 table_cell_css <- "white-space: nowrap; font-size: .95em;" # relative to the table_css
-
-
 ```
+
 <!-- \definecolor{hightlightColor}{HTML}{FFFF66} -->
+
+```{r pkgload-render, include=FALSE}
+ load_pkg_c19(params$use_pkgload)
+```
+```{r pkgload-server, include=FALSE, context="server"}
+ load_pkg_c19(knit_params$use_pkgload)
+```
+
 
 Since May 2020 <span style="background-color: #dfc77f">**Mirai Solutions**</span> is showing a dashboard on our [gallery](https://mirai-solutions.ch/gallery/){target="_blank"} that contains a global view of the [COVID-19 Pandemic](https://mirai-solutions.ch/gallery/covid19/){target="_blank"} with a further split by continent and country. We use publicly available data from the [COVID-19 Data Hub](https://covid19datahub.io/){target="_blank"}, a great open source project providing a unified data set put together from numerous official local sources from all over the world.
 
@@ -69,12 +87,13 @@ The data documentation makes us aware of the following restrictions and warnings
 To solve the former problem (1.) we will use the average of the "Vaccinated" an "Unvaccinated" population sizes across the month.   
 
 ```{r read-all-source, context="data", messages = FALSE, echo = FALSE, eval = TRUE, cache=TRUE}
-if (!params$rds) {
+if (params$fetch_latest_data) {
   message("** reading Vac data from Source **")
   DATA = read_bag_data_vac(bag_api_url, ageclassMap)
+} else {
   # read from RDS
-} else
   DATA <- readRDS(file.path(data_path(), "DATA.rds"))
+}
 
 # aggregation to new age classes
 DATA.AGG = DATA %>%
@@ -87,11 +106,13 @@ period = paste(range(weeks4), collapse = "-")
 DATA.AG4W <- DATA.AGG %>% filter(Week %in% weeks4)
 
 # read Cases, from RDS
-if (!params$rds) {
+if (params$fetch_latest_data) {
   message("** reading Infection data from Source **")
   CASES = read_bag_data_cases(bag_api_url, ageclassMap, dateweek = unique(DATA$Week))
-} else 
+} else {
+  # read from RDS
   CASES <- readRDS(file.path(data_path(), "CASES.rds"))
+}
 
 CASES.AGG = CASES %>%
     group_by(Week,AgeClass ) %>%

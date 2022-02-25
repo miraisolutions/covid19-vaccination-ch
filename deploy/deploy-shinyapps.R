@@ -15,6 +15,8 @@ rsconnect::deployApp(
   appName = "covid19-vaccination-ch",
 )
 
+unlink("index.Rmd")
+
 # rsconnect::deployDoc(
 #   account = "miraisolutions",
 #   doc = "inst/report/index.Rmd",

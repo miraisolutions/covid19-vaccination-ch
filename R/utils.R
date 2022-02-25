@@ -25,7 +25,7 @@ vac_levels <- function(){
 
 #' Color for Current Status
 #'
-#' @noRd
+#' @export
 col_current_status <- function() {
   "tomato4"
 }

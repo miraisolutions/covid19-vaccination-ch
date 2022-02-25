@@ -4,12 +4,19 @@
 \alias{run_report}
 \title{Run the Rmd report}
 \usage{
-run_report(rds = TRUE, ...)
+run_report(
+  fetch_latest_data = FALSE,
+  render_args = NULL,
+  auto_reload = TRUE,
+  shiny_args = NULL
+)
 }
 \arguments{
-\item{rds}{logical, if FALSE the data are read from source, if TRUE from RDS files in \code{bag_data} folder. Default = TRUE, FALSE to be used in local run.}
+\item{fetch_latest_data}{logical, if FALSE the data are read from source, if TRUE from RDS files in \code{bag_data} folder. Default = TRUE, FALSE to be used in local run.}
 
-\item{...}{Additional arguments to \code{\link[rmarkdown:run]{rmarkdown::run()}}, different from \code{render_args}.}
+\item{render_args}{list, additional arguments to pass to \code{\link[rmarkdown:render]{rmarkdown::render()}}}
+
+\item{shiny_args}{list, additional arguments to pass to \code{\link[shiny:runApp]{shiny::runApp()}}}
 }
 \description{
 Run the Rmd report

@@ -13,9 +13,20 @@ data_path <- function() {
 
 #' Run the Rmd report
 #'
-#' @param rds logical, if FALSE the data are read from source, if TRUE from RDS files in `bag_data` folder. Default = TRUE, FALSE to be used in local run.
-#' @param ... Additional arguments to [rmarkdown::run()], different from `render_args`.
+#' @param fetch_latest_data logical, if FALSE the data are read from source, if TRUE from RDS files in `bag_data` folder. Default = TRUE, FALSE to be used in local run.
+#' @param render_args list, additional arguments to pass to [rmarkdown::render()]
+#' @param shiny_args list, additional arguments to pass to [shiny::runApp()]
 #' @export
-run_report <- function(rds = TRUE, ...) {
-  rmarkdown::run(file.path(report_path(), "index.Rmd"), render_args = list(params = list(rds = rds)), ...)
+run_report <- function(fetch_latest_data = FALSE, render_args = NULL, auto_reload = TRUE,
+                       shiny_args = NULL) {
+  index_rmd_args <- list(params =
+                           list(fetch_latest_data = fetch_latest_data, use_pkgload = FALSE)
+                        )
+  render_args$params <- c(render_args$params, index_rmd_args$params)
+  rmarkdown::run(file.path(report_path(), "index.Rmd"),
+                 render_args = render_args, auto_reload = auto_reload,
+                 shiny_args = shiny_args)
 }
+
+# run_report(render_args = list(params = list(rds = FALSE)))
+# run_report(rds = FALSE)
