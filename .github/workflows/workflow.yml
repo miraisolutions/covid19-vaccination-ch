@@ -73,10 +73,10 @@ jobs:
       - name: Commit and push updated BAG data
         if: github.event_name == 'schedule'
         run: |
-          git config --local user.name "$GITHUB_ACTOR"
-          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
           git add inst/bag_data/\*
-          git commit -m "GitHub Action: Update BAG data" || echo "GitHub Action: No changes to commit"
+          git commit -m "Update BAG data" || echo "No changes to commit"
           git pull --ff-only
           git push origin
 
