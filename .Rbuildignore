@@ -7,3 +7,6 @@
 ^renv\.lock$
 ^deploy$
 ^rsconnect$
+^inst/report/index_cache$
+^inst/report/index_data$
+^tests/testthat/_snaps$
