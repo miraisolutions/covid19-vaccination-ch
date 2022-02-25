@@ -3,8 +3,11 @@ bag_api_url <- "https://www.covid19.admin.ch/api/data/context/"
 
 
 #' Mapping Age Classes data.frame
+#' `ageclass`: original age classes from BAG data sources
+#' `AgeClass`: re-categorized Age Classes for the 1st part of the report
+#' `AgeClass2`: re-categorized Age Classes for the 2nd part of the report
 #'
-#' @noRd
+#' @export
 ageclassMap <- data.frame(
   # Exclude unknown and all
   ageclass = c("0 - 9", "10 - 19", "20 - 29", "30 - 39", "40 - 49", "50 - 59", "60 - 69", "70 - 79", "80+" ),
@@ -18,44 +21,45 @@ ageclassMap <- data.frame(
 #'
 #' @param bag.admin.url character vector, BAG data url
 #' @param ageclassMap data.frame with mapping age
-#' 
+#'
 #' @importFrom jsonlite fromJSON
 #' @import dplyr
+#' @export
 read_bag_data_vac <- function(bag.admin.url, ageclassMap) {
   # define variables:
-  BAGSOURCES <- jsonlite::fromJSON(bag.admin.url)
+  BAGSOURCES <- fromJSON(bag.admin.url)
   sourceDate <- BAGSOURCES$sourceDate
-  
+
   # confirmed Vaccinated are not updated anymore
-  
+
   #TODO: exclusion of 2020 done by hand
   Hosp_vaccpersons <- BAGSOURCES$sources$individual$json$weekly$byAge$hospVaccPersons
-  HOSP.VAC.J <- jsonlite::fromJSON(Hosp_vaccpersons) %>%
+  HOSP.VAC.J <- fromJSON(Hosp_vaccpersons) %>%
     filter(!grepl("2020",date)) %>%
     mutate(Week = .makeweek(date))
-  
+
   Death_vaccpersons <- BAGSOURCES$sources$individual$json$weekly$byAge$deathVaccPersons
-  DEATH.VAC.J <- jsonlite::fromJSON(Death_vaccpersons) %>%
+  DEATH.VAC.J <- fromJSON(Death_vaccpersons) %>%
     filter(!grepl("2020",date)) %>%
     mutate(Week = .makeweek(date))
-  
-  dateweek <- 
+
+  dateweek <-
     intersect(HOSP.VAC.J$Week, DEATH.VAC.J$Week)
-  
+
   message("dateweek: ", paste(dateweek, collapse = ", "))
-  
+
   .clean_cases_vac <- function(data, dateweek, region = "CHFL", var = "confirmed") {
     # data in ascending order
-    
+
     var_tot <- paste(var, "tot", sep = "_")
     var_vax <- paste(var, sep = "_")
-    
+
     data %>% filter(Week %in% dateweek & geoRegion == region & vaccination_status != "fully_vaccinated") %>%
       rename(ageclass = altersklasse_covid19, {{var_vax}} := entries, {{var_tot}} := sumTotal) %>%
       mutate(AgeClass = ageclassMap$AgeClass[match(ageclass, ageclassMap$ageclass)],
              AgeClass2 = ageclassMap$AgeClass2[match(ageclass, ageclassMap$ageclass)],
              AsOfDate = substring(version, 1, 10)) %>%
-      mutate(AgeClass = ifelse(ageclass == "all", "All", AgeClass), 
+      mutate(AgeClass = ifelse(ageclass == "all", "All", AgeClass),
              AgeClass2 = ifelse(ageclass == "all", "All", AgeClass2)) %>%
       mutate(AgeClass = ifelse(is.na(AgeClass), "unknown", AgeClass),
              AgeClass2 = ifelse(is.na(AgeClass2), "unknown", AgeClass2)) %>%
@@ -63,23 +67,23 @@ read_bag_data_vac <- function(bag.admin.url, ageclassMap) {
         vaccination_status,
         levels = c(vac_levels()),
         labels = c(names(vac_levels()))
-        
+
       )) %>%
       select(Week, AsOfDate, geoRegion, ageclass, AgeClass, AgeClass2, vaccination_status, pop, !!var_vax, !!var_tot)
   }
-  
+
   HOSP.VAC <- .clean_cases_vac(HOSP.VAC.J, dateweek, var = "hosp")
   DEATH.VAC <- .clean_cases_vac(DEATH.VAC.J, dateweek, var = "deaths")
-  
+
   # realign the as of dates
-  
+
   AsOfDate = min(HOSP.VAC$AsOfDate, DEATH.VAC$AsOfDate)
   DEATH.VAC$AsOfDate <- HOSP.VAC$AsOfDate <- AsOfDate
-  
-  RES <- 
+
+  RES <-
     merge(HOSP.VAC, DEATH.VAC %>% select(-pop),
           by = c("AsOfDate", "Week", "geoRegion", "ageclass", "AgeClass", "AgeClass2", "vaccination_status"), sort = FALSE)
-  
+
   RES
 }
 
@@ -89,26 +93,27 @@ read_bag_data_vac <- function(bag.admin.url, ageclassMap) {
 #' @param bag.admin.url character vector, BAG data url
 #' @param ageclassMap data.frame with mapping age
 #' @param dateweek dates in Weeks format to be used to filter the data
-#' 
+#'
 #' @importFrom jsonlite fromJSON
 #' @import dplyr
+#' @export
 read_bag_data_cases <- function(bag.admin.url, ageclassMap, dateweek = NULL) {
   # define variables:
-  BAGSOURCES <- jsonlite::fromJSON(bag.admin.url)
+  BAGSOURCES <- fromJSON(bag.admin.url)
   sourceDate <- BAGSOURCES$sourceDate
-  
+
   Cases = BAGSOURCES$sources$individual$json$weekly$byAge$cases
-  CASES.J <- jsonlite::fromJSON(Cases) %>%
+  CASES.J <- fromJSON(Cases) %>%
     filter(!grepl("2020",datum)) %>%
     mutate(Week = .makeweek(datum))
-  
+
   .clean_cases = function(data, dateweek, region = "CHFL", var = "confirmed") {
     # data in ascending order
     var_tot = paste(var, "tot", sep = "_")
-    
+
     if (!is.null(dateweek))
       data <- data %>% filter(Week %in% dateweek)
-    
+
     res <- data %>% filter(geoRegion == region ) %>%
       rename(ageclass = altersklasse_covid19, {{var}} := entries, {{var_tot}} := sumTotal
              # {{growth_fact}} := entries_diff_pct, {{diff}} := entries_diff_abs)
@@ -119,19 +124,19 @@ read_bag_data_cases <- function(bag.admin.url, ageclassMap, dateweek = NULL) {
       mutate(AgeClass = ifelse(is.na(AgeClass),"unknown",AgeClass),
              AgeClass2 = ifelse(is.na(AgeClass2),"unknown",AgeClass2)) %>%
       select(Week, AsOfDate, geoRegion, ageclass, AgeClass, AgeClass2, !!var, !!var_tot, pop) #, !!growth_fact, !!diff)
-    
+
     res_age_tot <-  res %>%
       group_by(Week,AsOfDate,geoRegion) %>%
       summarize(across(where(is.numeric), sum, na.rm = TRUE)) %>%
       ungroup() %>%
       mutate(ageclass = "All", AgeClass = "All", AgeClass2 = "All")
-    
+
     res <- bind_rows(res, res_age_tot) %>%
       arrange(desc(Week),desc(ageclass))
     res
   }
-  
+
   CASES = .clean_cases(CASES.J, dateweek)
-  
+
   CASES
 }

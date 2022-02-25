@@ -4,10 +4,26 @@
 \alias{run_report}
 \title{Run the Rmd report}
 \usage{
-run_report(...)
+run_report(
+  fetch_latest_data = FALSE,
+  render_args = NULL,
+  auto_reload = TRUE,
+  shiny_args = NULL
+)
 }
 \arguments{
-\item{...}{Additional arguments to \code{\link[rmarkdown:run]{rmarkdown::run()}}.}
+\item{fetch_latest_data}{logical, if \code{TRUE} the data re-fetched from the BAG
+source, otherwise data are read from the stored RDS files in
+\code{inst/bag_data}. Defaults to \code{TRUE}, \code{FALSE} can be used in local runs.}
+
+\item{render_args}{list, additional arguments to pass to
+\code{\link[rmarkdown:render]{rmarkdown::render()}}}
+
+\item{auto_reload}{logical, additional argument to pass to
+\code{\link[rmarkdown:run]{rmarkdown::run()}}, If \code{TRUE} (the default), automatically reload the Shiny
+application when the file currently being viewed is changed on disk.}
+
+\item{shiny_args}{list, additional arguments to pass to \code{\link[shiny:runApp]{shiny::runApp()}}}
 }
 \description{
 Run the Rmd report

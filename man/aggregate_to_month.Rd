@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{aggregate_to_month}
 \alias{aggregate_to_month}
-\title{Compute Totals over a given time period}
+\title{Compute Totals over a given time period (month)}
 \usage{
 aggregate_to_month(
   data,
@@ -24,5 +24,5 @@ aggregate_to_month(
 \item{cumv}{character vector of columns that are cumulative (daily record) and should not be aggregated}
 }
 \description{
-Compute Totals over a given time period
+Compute Totals over a given time period (month)
 }

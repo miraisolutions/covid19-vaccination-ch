@@ -1,11 +1,11 @@
 test_that("reading vaccination data works", {
-  bag_sources = jsonlite::fromJSON(bag_api_url)
+  bag_sources = fromJSON(bag_api_url)
   sourceDate <- bag_sources$sourceDate
   
   Hosp_vaccpersons <- bag_sources$sources$individual$json$weekly$byAge$hospVaccPersons
   expect_false(is.null(Hosp_vaccpersons), label = "sources$individual$json$weekly$byAge$hospVaccPersons is NULL")
   
-  HOSP.VAC.J <- jsonlite::fromJSON(Hosp_vaccpersons) %>%
+  HOSP.VAC.J <- fromJSON(Hosp_vaccpersons) %>%
     filter(!grepl("2020",date)) %>%
     mutate(Week = .makeweek(date))
   
@@ -19,7 +19,7 @@ test_that("reading vaccination data works", {
   Death_vaccpersons <- bag_sources$sources$individual$json$weekly$byAge$deathVaccPersons
   expect_false(is.null(Death_vaccpersons), label = "sources$individual$json$weekly$byAge$deathVaccPersons is NULL")
   
-  DEATH.VAC.J <- jsonlite::fromJSON(Death_vaccpersons) %>%
+  DEATH.VAC.J <- fromJSON(Death_vaccpersons) %>%
     filter(!grepl("2020",date)) %>%
     mutate(Week = .makeweek(date))
   
@@ -45,7 +45,7 @@ test_that("reading vaccination data works", {
   
 })
 test_that("reading case data works", {
-  bag_sources = jsonlite::fromJSON(bag_api_url)
+  bag_sources = fromJSON(bag_api_url)
   CASES = read_bag_data_cases(bag_api_url, ageclassMap)
   
   expect_true(nrow(CASES)>0, 

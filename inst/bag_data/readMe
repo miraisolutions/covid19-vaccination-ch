@@ -1,4 +1,0 @@
-In this folder the RDS data are generated in GitHubActions by the build-data.yml file that runs the build_data() function.
-The RDSs do not have to be generated and pushed locally.
-A local Pull will be required any time the data are updated in the reporsitory.
-The update happens only in the main branch.

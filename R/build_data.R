@@ -8,7 +8,7 @@
 #' @import dplyr
 build_data <- function(url = bag_api_url, agemap = ageclassMap, writerds = TRUE) {
   message("BUILD DATA")
-  bag_sources = jsonlite::fromJSON(bag_api_url)
+  bag_sources = fromJSON(bag_api_url)
   
   message("Read vaccination")
   
