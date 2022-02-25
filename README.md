@@ -17,9 +17,9 @@ article:
 - Hospitalization / Deaths counts
 - Hospitalization / Deaths per 100'000 people
 
-Entries with "Unknown" vaccination status are allocated to the 4 populations proportionally. Infection cases cannot be used for comparison because not provided by BAG.
+Entries with "Unknown" vaccination status are allocated to the 4 populations proportionally. Infection cases cannot be used for comparison because not provided by *BAG*.
 
-The application fetches the data from BAG on a daily basis as part of a [Continuous Integration / Deployment workflow](#data-building-with-github-actions). Given that BAG updates the data daily also for the past weeks (delay in communication) the presented results are also updated. A new week is published by BAG on Monday.
+The application fetches the data from *BAG* on a daily basis as part of a [Continuous Integration / Deployment workflow](#data-building-with-github-actions). Given that *BAG* updates the data daily also for the past weeks (delay in communication) the presented results are also updated. A new week is published by *BAG* on Monday.
 
 ## Package covid19vaccinationch
 
@@ -35,6 +35,7 @@ and used to render the article locally from R via
 covid19vaccinationch::run_report()
 
 ```
+See help file for using the latest data from *BAG* source.
 
 ## R Markdown article
 
@@ -42,12 +43,12 @@ The dashboard article is defined as an R Markdown document `inst/report/index.Rm
 
 The R Markdown document uses `runtime: shiny_prerendered` and contains both `ggplot2` / `plotly` graphs and `shiny` dynamic charts. The usage of `runtime: shiny_prerendered` allows speeding up the rendering of the article for the users, see the corresponding [documentation](https://rmarkdown.rstudio.com/authoring_shiny_prerendered.HTML).
 
-## Deployment to shinyapps.io
+## Deployment to *shinyapps.io*
 
 The `covid19-vaccination-ch` R Markdown article is deployed to **shinyapps.io** and can be accessed at <https://mirai-solutions.ch/gallery/covid19-vaccination-ch>.
 
 ## Data building with GitHub Actions
 
-It is likely that upon data structure changes from BAG the article might fail to render. For this reason, data are programmatically updated and checked as part of the **Continuous Integration / Deployment GithUb Actions workflow** `.github/workflows/workflow.yml`.
+It is likely that upon data structure changes from *BAG* the article might fail to render. For this reason, data are programmatically updated and checked as part of the **Continuous Integration / Deployment GithUb Actions workflow** `.github/workflows/workflow.yml`. The report will therefore show the latest working data until the package is update to be compatible with the new data structure.
 
-Data are stored as RDS files inside the package under `inst/bag_data`, and used when rendering the article. A function of the package `build_data()` rebuilds the RDS files with the latest `BAG` data and overwrites them in `inst/bag_data`. This function is executed by the GitHub Action step _"Fetch and rebuild latest BAG data"_ every day at 13:00 UTC, and the updated data are tested (relying on `R CMD check`) and then committed and pushed to the `main` branch. Finally, the article with updated data is deployed to shinyapps.io, ensuring the application can be visualized with the daily updates.
+Data are stored as RDS files inside the package under `inst/bag_data`, and used when rendering the article. A function of the package `build_data()` rebuilds the RDS files with the latest *BAG* data and overwrites them in `inst/bag_data`. This function is executed by the GitHub Action step _"Fetch and rebuild latest BAG data"_ every day at 13:00 UTC, and the updated data are tested (relying on `R CMD check`) and then committed and pushed to the `main` branch. Finally, the article with updated data is deployed to *shinyapps.io*, ensuring the application can be visualized with the daily updates.
