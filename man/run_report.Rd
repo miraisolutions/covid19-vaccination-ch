@@ -16,6 +16,8 @@ run_report(
 
 \item{render_args}{list, additional arguments to pass to \code{\link[rmarkdown:render]{rmarkdown::render()}}}
 
+\item{auto_reload}{logical, additional argument to pass to \code{\link[rmarkdown:run]{rmarkdown::run()}}, If TRUE (the default), automatically reload the Shiny application when the file currently being viewed is changed on disk.}
+
 \item{shiny_args}{list, additional arguments to pass to \code{\link[shiny:runApp]{shiny::runApp()}}}
 }
 \description{

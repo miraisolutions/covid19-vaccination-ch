@@ -16,6 +16,7 @@ data_path <- function() {
 #' @param fetch_latest_data logical, if FALSE the data are read from source, if TRUE from RDS files in `bag_data` folder. Default = TRUE, FALSE to be used in local run.
 #' @param render_args list, additional arguments to pass to [rmarkdown::render()]
 #' @param shiny_args list, additional arguments to pass to [shiny::runApp()]
+#' @param auto_reload logical, additional argument to pass to [rmarkdown::run()], If TRUE (the default), automatically reload the Shiny application when the file currently being viewed is changed on disk.
 #' @export
 run_report <- function(fetch_latest_data = FALSE, render_args = NULL, auto_reload = TRUE,
                        shiny_args = NULL) {
