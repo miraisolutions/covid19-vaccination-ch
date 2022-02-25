@@ -6,10 +6,10 @@ on:
   push:
   pull_request:
   schedule:
-    #every day at 13pm UCT excluding Saturday and Sunday
+    # every day at 13:00 UTC excluding Saturday and Sunday
     - cron: "0 13 * * 1-5"
 
-# Name of the workflow => usethis::use_github_actions_badge("CI-CD-renv")
+# Name of the workflow => usethis::use_github_actions_badge("CI-CD-BUILD-DATA")
 name: CI-CD-BUILD-DATA
 
 jobs:
@@ -56,7 +56,7 @@ jobs:
       - name: Activate renv and restore packages with cache
         uses: r-lib/actions/setup-renv@v2
 
-      - name: Run R build data script
+      - name: Fetch and rebuild latest BAG data
         if: github.event_name == 'schedule'
         run: |
           pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
@@ -70,7 +70,7 @@ jobs:
       - name: Check package
         uses: r-lib/actions/check-r-package@v2
 
-      - name: Commit and push changes
+      - name: Commit and push updated BAG data
         if: github.event_name == 'schedule'
         run: |
           git config --local user.name "$GITHUB_ACTOR"
