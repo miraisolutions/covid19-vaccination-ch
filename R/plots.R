@@ -310,7 +310,7 @@ BarplotCovid <- function(df, X, FACET, percent = FALSE, g_palette, position = "f
       traces <- c(traces, c("remove"))
 
     } else {
-      df2 <- df %>% group_by(!!sym(FACET)) %>% summarize(maxval = max(Value, na.rm = TRUE)*1.05)
+      df2 <- df %>% group_by(!!sym(FACET)) %>% summarize(maxval = max(Value, na.rm = TRUE)*1.05) %>% ungroup()
       df2$TextHigh <- (df2$maxval - ylim[1])/100
       df <- df %>% left_join(df2, by = FACET)
       df$TextHigh <- df$Value + df$TextHigh
