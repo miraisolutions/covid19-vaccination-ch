@@ -648,5 +648,5 @@ Similar results about the benefits of vaccination are available from other count
 If you have any question about the approach, or any suggestion for improvement please do not hesitate to get in [touch](https://mirai-solutions.ch/about/contact/){target="_blank"}, we would love to hear from you as we may publish further updates to this article.
 
 This page article aims also at showing how an **R Markdown** file can be deployed to **shinyapps.io** to be a live page.
-For details on the architecture of the **covid19vaccinationch** R package that supports this deployment and its installation see the [README](https://github.com/miraisolutions/covid19-vaccination-ch/blob/main/README.md){target="_blank"} on our public **GitHub** repository or read the related [**news post**](https://mirai-solutions.ch/news/2022/03/08/announce-covid19-vaccination-ch/){target="_blank"} where we described it more in details.
+For details on the architecture of the **covid19vaccinationch** R package that supports this deployment and its installation see the [README](https://github.com/miraisolutions/covid19-vaccination-ch#readme){target="_blank"} on our public **GitHub** repository or read the related [**news post**](https://mirai-solutions.ch/news/2022/03/08/announce-covid19-vaccination-ch/){target="_blank"} where we described it more in details.
 
