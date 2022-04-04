@@ -6,8 +6,8 @@ on:
   push:
   pull_request:
   schedule:
-    # every day at 13:00 UTC excluding Saturday and Sunday
-    - cron: "0 13 * * 1-5"
+    # every day at 13:00 UTC excluding Saturday and Sunday / UTC is 1h before us.
+    - cron: "0 17 * * 2"
 
 # Name of the workflow => usethis::use_github_actions_badge("CI-CD-BUILD-DATA")
 name: CI-CD-BUILD-DATA
@@ -71,7 +71,7 @@ jobs:
         uses: r-lib/actions/check-r-package@v2
 
       - name: Commit and push updated BAG data
-        if: github.event_name == 'schedule'
+        #if: github.event_name == 'schedule'
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
