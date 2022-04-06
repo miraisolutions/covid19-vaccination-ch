@@ -10,7 +10,7 @@ rsconnect::setAccountInfo(
 file.copy("inst/report/index.Rmd", "index.Rmd", overwrite = TRUE)
 
 rsconnect::deployApp(
-  appName = "covid19-vaccination-ch-test",
+  appName = "covid19-vaccination-ch",
 )
 
 unlink("index.Rmd")
