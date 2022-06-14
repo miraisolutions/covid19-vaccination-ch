@@ -387,7 +387,7 @@ StackedBarplotCovid(DataPlot100kScaleRatiosPlot %>% select(-Variable) , g_palett
                     X = "AgeClass", FILL = "Status", FACET = "Case", percent = FALSE, title = "Ratio of Unvac. Impact vs Fully Vac", position = "dodge")
 
 ```
-```{r ageclasses-vacc-unvac-scale100k-tab, warning=FALSE, out.width="100%"}
+```{r ageclasses-vacc-unvac-scale100k-tab, warning=FALSE, out.width="120%"}
 DataPlot100kScaleRatios %>%
   addHtmlTableStyle(
     align = "c", css.table = table_css,
