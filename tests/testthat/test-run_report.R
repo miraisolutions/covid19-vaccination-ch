@@ -13,9 +13,10 @@ test_that("Running the Rmd report works", {
     echo_cmd = TRUE,
     command = r_,
     c("-e", run_expression),
-    stdout = "|", stderr = "|"
+    # we need stderr = "" to ensure errors are captured as breaking
+    stdout = NULL, stderr = ""
   )
   Sys.sleep(15)
-  expect_true(run_process$is_alive(), info = run_process$read_all_error())
+  expect_true(run_process$is_alive())
   run_process$kill()
 })
