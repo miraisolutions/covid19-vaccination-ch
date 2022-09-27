@@ -26,6 +26,7 @@ ageclassMap <- data.frame(
 #' @import dplyr
 #' @export
 read_bag_data_vac <- function(bag.admin.url, ageclassMap) {
+  # bag.admin.url = bag_api_url
   # define variables:
   BAGSOURCES <- fromJSON(bag.admin.url)
   sourceDate <- BAGSOURCES$sourceDate
@@ -36,12 +37,14 @@ read_bag_data_vac <- function(bag.admin.url, ageclassMap) {
   Hosp_vaccpersons <- BAGSOURCES$sources$individual$json$weekly$byAge$hospVaccPersons
   HOSP.VAC.J <- fromJSON(Hosp_vaccpersons) %>%
     filter(!grepl("2020",date)) %>%
-    mutate(Week = .makeweek(date))
+    mutate(Week = .makeweek(date)) %>%
+    filter(altersklasse_covid19 %in% c(ageclassMap$ageclass, c("Unbekannt", "all")))
 
   Death_vaccpersons <- BAGSOURCES$sources$individual$json$weekly$byAge$deathVaccPersons
   DEATH.VAC.J <- fromJSON(Death_vaccpersons) %>%
     filter(!grepl("2020",date)) %>%
-    mutate(Week = .makeweek(date))
+    mutate(Week = .makeweek(date)) %>%
+    filter(altersklasse_covid19 %in% c(ageclassMap$ageclass, c("Unbekannt", "all")))
 
   dateweek <-
     intersect(HOSP.VAC.J$Week, DEATH.VAC.J$Week)
@@ -105,7 +108,8 @@ read_bag_data_cases <- function(bag.admin.url, ageclassMap, dateweek = NULL) {
   Cases = BAGSOURCES$sources$individual$json$weekly$byAge$cases
   CASES.J <- fromJSON(Cases) %>%
     filter(!grepl("2020",datum)) %>%
-    mutate(Week = .makeweek(datum))
+    mutate(Week = .makeweek(datum)) %>%
+    filter(altersklasse_covid19 %in% c(ageclassMap$ageclass, c("Unbekannt", "all")))
 
   .clean_cases = function(data, dateweek, region = "CHFL", var = "confirmed") {
     # data in ascending order

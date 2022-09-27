@@ -195,7 +195,8 @@ To account for different distribution of the population in the Age Classes consi
 ```{r ageclasses-pandemic-month-100k, out.width="100%", fig.asp=0.50, dpi=150}
 datacases100k = datacases %>%  mutate(Value = Value / pop * 100000)
 
-plotcol <- c(rep(pick_vac_lev_col("not_vaccinated"), length(unique(ageclassMap$AgeClass))), "firebrick4")
+# plotcol <- c(rep(pick_vac_lev_col("not_vaccinated"), length(unique(ageclassMap$AgeClass))), "firebrick4")
+plotcol <- pick_vac_lev_col("not_vaccinated")
 
 BarplotCovid(datacases100k, g_palette = plotcol,
              X = "AgeClass", FACET = "Case", percent = FALSE)
