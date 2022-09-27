@@ -81,7 +81,7 @@ bag_sources = jsonlite::fromJSON(bag_api_url)
 
 The data documentation makes us aware of the following restrictions and warnings about the collected data:
 
-1. During the last month the populations of "Vaccinated" and "Unvaccinated" changed, i.e. the vaccinated population has slightly increased.
+1. During the vaccination campaign the populations of "Vaccinated" and "Unvaccinated" changed, i.e. the vaccinated population has slightly increased.
 2. Many infected people have "Unknown" vaccination status, therefore this source has been disabled by BAG, while a more complete information is available for *Hospitalized* and *Deaths* cases.
 
 To solve the former problem (1.) we will use the average of the "Vaccinated" an "Unvaccinated" population sizes across the month.   
@@ -244,9 +244,9 @@ StackedBarplotCovid(datavacc, g_palette = c(plotcol), X = "AgeClass", FILL = "St
 
 <span style="background-color: #dfc77f">**`r datavacall %>% filter(Status %in% names(vac_levels())[vac_levels() == "fully_vaccinated_no_booster"]) %>% .[,"Value"]`**</span> of the Swiss population is fully vaccinated (2 doses), <span style="background-color: #dfc77f">**`r datavacall %>% filter(Status %in% names(vac_levels())[vac_levels() == "partially_vaccinated"]) %>% .[,"Value"]`**</span> has received at least one dose, while <span style="background-color: #dfc77f">**`r datavacall %>% filter(Status %in% names(vac_levels())[vac_levels() == "fully_vaccinated_first_booster"]) %>% .[,"Value"]`**</span> has received the booster dose.
 
-When making a comparison between the **Vaccinated** and **Unvaccinated** it is worth first highlighting the differences between the 2 populations that would bias such comparison.
-The biggest is the younger age of the "Unvaccinated" population, less likely to be impacted by Covid-19. For this reason the data are grouped in **Age Classes**, even within the same class, age has a certain variability and there are other differences to consider that may make a population more or less inclined to infection, and hence to hospitalizations. Measures in the Age Class "All" have to be age-adjusted.
-Further bias is introduced by the fact that "Unvaccinated" may recovered from Covid and therefore have a protection. Unfortunately we cannot extract relevant information from BAG that would allow us to exclude the already **Infected** from the "Unvaccinated" population. We can show here the % of total contagion in the global population and warn the readers that a "small" % of the "Unvaccinated" is NOT unprotected (leading to underestimation of the positive effect of vaccination).
+When making a comparison between the **Vaccinated** and **Unvaccinated** it is worth first highlighting the <u>differences between the 2 populations<u/> that would bias such comparison.   
+The biggest difference is the younger age of the "Unvaccinated" population, less likely to be impacted by Covid-19. For this reason the data are grouped in **Age Classes**, even within the same class, there can be are other differences to consider that may make a population more or less inclined to infection, and hence to hospitalizations. Measures in the Age Class "All" have to be age-adjusted.   
+Further bias is introduced by the fact that "Unvaccinated" may have recovered from Covid and therefore have a protection. Unfortunately we cannot extract relevant information from BAG that would allow us to exclude the already **Infected** from the "Unvaccinated" population. We can show here the % of total contagion in the global population and warn the readers that a "small" % of the "Unvaccinated" is NOT unprotected (leading to underestimation of the positive effect of vaccination).
 
 ```{r ageclasses-tot-confirmed, warning=FALSE, out.width="100%"}
 TotConfirmed <- CASES.AG1M %>% filter(AgeClass != "unknown") %>% select(AgeClass,confirmed_tot, pop)
@@ -420,7 +420,7 @@ Worth mentioning that the protection given by the vaccines against infection is 
 
 Despite the decay of vaccination benefits over time and against infections (Omicron), this is still a factor to consider.  
 
-The Incidence over 100'000 people in the 3 scenarios + Current are presented below:
+The Incidence over 100'000 people in the 3 scenarios + "Current" are presented below:
 
 ```{r ageclasses-cases-scenarios-100k, out.width="100%", fig.asp=0.50, dpi=150}
 
