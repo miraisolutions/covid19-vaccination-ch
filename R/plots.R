@@ -255,7 +255,7 @@ BarplotCovid <- function(df, X, FACET, percent = FALSE, g_palette, position = "f
   }
 
   if (barplotfacet && (length(g_palette) > 1))
-    g_palette = rep(g_palette, length(unique(df[[FACET]])))
+    g_palette <- rep(g_palette, length(unique(df[[FACET]])))
 
   p <- ggplot(df, aes(x = .data[[X]], y = Value, group = 1,
                       text = .popuptext(AsOfDate, Value, percent, digits))) +
@@ -619,30 +619,34 @@ LinePlotCovid <- function(df, FACET = "AgeClass", g_palette, percent = FALSE,
     ) + # set grey background
     ggtitle(title)
 
+  # define vertical month lines
   weeks_line <- weeks_to_date(unique(df$AsOfDate), range = FALSE)
   # Months
-  full_lines_order <- intersect(substring(weeks_line, 5,8),
-                               paste0("-",c(rep(0,4), c("","")), seq(2,12,2), "-"))
-  full_lines_char <- sapply(paste0("-",c(rep(0,4), c("","")), seq(2,12,2), "-"), function(x)
-    grep(x,weeks_line, value = TRUE)[1]
-  )
-  full_lines_char <- full_lines_char[full_lines_order]
 
-  full_lines <- unique(df$Week)[as.character(weeks_line) %in% full_lines_char]
+  months_dash <- paste0("-",c(rep(0,4), c("","")), seq(2,12,2), "-")
 
-  full_lines_label = as.character(month(full_lines_char, label = TRUE))
+  full_lines_order <- match(substring(weeks_line, 5,8), months_dash)
+  names(full_lines_order) <- substring(weeks_line, 1,8)
+
+  idx <- which(!is.na(full_lines_order))
+
+  full_lines <- sapply(unique(names(idx)), function(x) {
+    idx[x][1]
+    }) %>% as.numeric()
+
+  full_lines_label = as.character(month(weeks_line[full_lines], label = TRUE))
 
   data_line = data.frame(x = full_lines, y = Inf, lab = full_lines_label)
   data_line0 = data_line
 
   for (aclass in unique(df[[FACET]])[-1])
     data_line <- bind_rows(data_line,data_line0)
-  data_line[[FACET]] <- rep(unique(df$AgeClass), each = length(full_lines))
+  data_line[[FACET]] <- rep(unique(df[[FACET]]), each = length(full_lines))
 
 
   data_line <- data_line %>% left_join(
     df %>% group_by(!!sym(FACET)) %>%
-      summarize(maxval = ifelse(all(is.na(Value)), Inf,max(Value, na.rm = TRUE)) *1.1),
+      summarize(maxval = ifelse(all(is.na(Value)), Inf, max(Value, na.rm = TRUE)) *1.1),
     by = FACET)
 
   p <- p +
