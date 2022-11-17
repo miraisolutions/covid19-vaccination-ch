@@ -38,8 +38,6 @@ jobs:
 
       - name: set up pandoc
       - uses: r-lib/actions/setup-pandoc@v2
-        with:
-          pandoc-version: '2.17.1'
 
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
