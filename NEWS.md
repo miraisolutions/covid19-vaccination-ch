@@ -1,4 +1,6 @@
-# covid19vaccinationch (development version)
+# covid19vaccinationch 1.1.1
+
+* added lib action r-lib/actions/setup-pandoc@v2 (#16)
 
 # covid19vaccinationch 1.1.0
 
