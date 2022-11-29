@@ -1,3 +1,7 @@
+# covid19vaccinationch 1.1.1
+
+* Maintenance of `renv` and GitHub Actions workflow (#16).
+
 # covid19vaccinationch 1.1.0
 
 * Resume data collection, correction for additional age classes from BAG (#12)

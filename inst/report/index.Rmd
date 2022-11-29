@@ -282,6 +282,8 @@ We are happy to hear more from the readers about this topic and possibly collect
 
 ### Last 4 weeks vaccination breakthrough cases
 
+*UPDATE 2022-11: as it can be seen from the large numbers in the Unknown catefory, BAG does not keep track properly any more of the vaccination status.*
+
 A view of the absolute figures of all vaccination categories, including **"Unknown"**, i.e. not reported.
 
 ```{r ageclasses-vacc-unvac-dataplot, warning=FALSE, cache=TRUE }
@@ -638,7 +640,7 @@ The "Unvaccinated" and "Vaccinated" populations compared in this page have some 
 
 Other differences between the populations have been mentioned.
 
-Even with some deficiency in the data, this analysis clearly shows the benefits of vaccination and what could have happened this month in Switzerland if vaccines had been unavailable.    
+Even with some deficiency in the data, this analysis clearly shows the benefits of vaccination and what could have happened in Switzerland if vaccines had been unavailable. *Please note that the data collection from BAG was sufficiently accurate until 2022Q2, therefore the historical comparisons of this report from 2022Q2 onwards are less meaningful.*    
 
 Similar results about the benefits of vaccination are available from other countries, their dashboards or produced reports could be checked for comparison. Here a short recent list:  
 

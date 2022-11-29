@@ -1,6 +1,6 @@
 Package: covid19vaccinationch
 Title: Vaccination Breakthroughs in CH
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: 
     person("Guido", "Maggio", , "guido-maggio@mirai-solutions.com", role = c("cre", "aut"))
 Description: A live article on vaccination breakthroughs in Switzerland,
@@ -32,4 +32,4 @@ Suggests:
 Encoding: UTF-8
 Language: en-US
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.2
