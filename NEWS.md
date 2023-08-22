@@ -1,3 +1,7 @@
+# covid19vaccinationch 1.1.2
+
+* Stopped schedule workflow in GitHub actions (#18).
+
 # covid19vaccinationch 1.1.1
 
 * Maintenance of `renv` and GitHub Actions workflow (#16).
