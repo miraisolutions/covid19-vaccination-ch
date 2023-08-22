@@ -5,9 +5,9 @@
 on:
   push:
   pull_request:
-  schedule:
-    # every Tuesday (2) at 15:00 and 18:00 UTC
-    - cron: "0 15,18 * * 2"
+  # schedule:
+  #   # every Tuesday (2) at 15:00 and 18:00 UTC
+  #   - cron: "0 15,18 * * 2"
 
 # Name of the workflow => usethis::use_github_actions_badge("CI-CD-BUILD-DATA")
 name: CI-CD-BUILD-DATA
@@ -49,12 +49,12 @@ jobs:
       - name: Activate renv and restore packages with cache
         uses: r-lib/actions/setup-renv@v2
 
-      - name: Fetch and rebuild latest BAG data
-        if: github.event_name == 'schedule'
-        run: |
-          pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
-          build_data()
-        shell: Rscript {0}
+      # - name: Fetch and rebuild latest BAG data
+      #   if: github.event_name == 'schedule'
+      #   run: |
+      #     pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
+      #     build_data()
+      #   shell: Rscript {0}
 
       - name: Install R CMD check
         run: install.packages("rcmdcheck")
@@ -63,15 +63,15 @@ jobs:
       - name: Check package
         uses: r-lib/actions/check-r-package@v2
 
-      - name: Commit and push updated BAG data
-        if: github.event_name == 'schedule'
-        run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-          git add inst/bag_data/\*
-          git commit -m "Update BAG data" || echo "No changes to commit"
-          git pull --ff-only
-          git push origin
+      # - name: Commit and push updated BAG data
+      #   if: github.event_name == 'schedule'
+      #   run: |
+      #     git config --local user.email "actions@github.com"
+      #     git config --local user.name "GitHub Actions"
+      #     git add inst/bag_data/\*
+      #     git commit -m "Update BAG data" || echo "No changes to commit"
+      #     git pull --ff-only
+      #     git push origin
 
       - name: Deploy to shinyapps.io
         # Continuous deployment only for pushes to the main / master branch
