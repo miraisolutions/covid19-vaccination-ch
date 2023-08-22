@@ -776,9 +776,8 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "0.16.0",
-      "Source": "Repository",
-      "Requirements": []
+      "Version": "1.0.2",
+      "Source": "Repository"
     },
     "rlang": {
       "Package": "rlang",
@@ -817,19 +816,8 @@
     },
     "rsconnect": {
       "Package": "rsconnect",
-      "Version": "0.8.27",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "114103fbb50af041e93921ee67db8fa0",
-      "Requirements": [
-        "curl",
-        "digest",
-        "jsonlite",
-        "openssl",
-        "packrat",
-        "rstudioapi",
-        "yaml"
-      ]
+      "Version": "1.0.2",
+      "Source": "Repository"
     },
     "rstudioapi": {
       "Package": "rstudioapi",
