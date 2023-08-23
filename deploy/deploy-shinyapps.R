@@ -14,7 +14,8 @@ options(rsconnect.packrat = TRUE)
 rsconnect::deployApp(
   account = "miraisolutions",
   appName = "covid19-vaccination-ch-test",
-  forceUpdate = TRUE
+  forceUpdate = TRUE,
+  quarto = FALSE
 )
 
 unlink("index.Rmd")
