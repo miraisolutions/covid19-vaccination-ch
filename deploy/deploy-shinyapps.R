@@ -9,9 +9,11 @@ rsconnect::setAccountInfo(
 # TODO: We currently have copy the file for the deployment to work
 file.copy("inst/report/index.Rmd", "index.Rmd", overwrite = TRUE)
 
+options(rsconnect.packrat = TRUE)
+
 rsconnect::deployApp(
   account = "miraisolutions",
-  appName = "covid19-vaccination-ch",
+  appName = "covid19-vaccination-ch-test",
   forceUpdate = TRUE
 )
 
