@@ -1,3 +1,4 @@
+# INVALID SINCE READING IS NOT POSSIBLE
 # test_that("reading vaccination data works", {
 #   bag_sources = fromJSON(bag_api_url)
 #   sourceDate <- bag_sources$sourceDate
