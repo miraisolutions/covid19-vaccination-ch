@@ -75,8 +75,6 @@ We are interested in the weekly BAG reports about vaccination breakthroughs occu
 ```{r bagsources, context="setup", echo=FALSE, eval = TRUE}
 # bag_api_url = covid19vaccinationch:::bag_api_url
 bag_api_url <- "https://www.covid19.admin.ch/api/data/context/"
-
-bag_sources = jsonlite::fromJSON(bag_api_url)
 ```
 
 The data documentation makes us aware of the following restrictions and warnings about the collected data:
